@@ -2,11 +2,7 @@ clear all; close all;
 
 datapath=findInfoseekData();
 
-% summarySettings=load(fullfile(datapath,'BpodInfoseekSummarySettingsWTAll.mat'));
-% summarySettings=load(fullfile(datapath,'BpodInfoseekSummarySettingsStay.mat'));
-% summarySettings=load(fullfile(datapath,'BpodInfoseekSummarySettingsSilencing3.mat'));
-summarySettings=load(fullfile(datapath,'BpodInfoseekSummarySettingsDf16current.mat'));
-% summarySettings=load(fullfile(datapath,'BpodInfoseekSummarySettingsTwoPort.mat'));
+summarySettings=load(fullfile(datapath,'BpodInfoseekSummarySettingsWTAll.mat'));
 
 dataset = summarySettings.dataset;
 mouseList = summarySettings.mouseList;
@@ -28,16 +24,6 @@ filesUnique=unique(filesT);
 numFiles = size(filesUnique,1);
 
 f=3;
-
-% load main session table from file!
-
-% load each file and concatenate variables
-% loadVars={'file','mouse','day','trial','correct','info',...
-%     'outcome','trialType','trialTypes','infoSide','reward',...
-%     'rxn','trialLength','trialLengthCenterEntry','odorDelay','rewardDelay',...
-%     'rewardParams','trialSettings.Interval','trialSettings.GracePeriod','trialSettings.OdorTime',...
-%     'odorAtrials','odorBtrials','odorCtrials','odorDtrials','odor2On','anticipatoryInfoLicks','anticipatoryRandLicks',...
-%     'earlyInfoLicks','earlyRandLicks','waterInfoLicks','waterRandLicks'};
 
 loadVars={'mouse','day','trial','correct','info',...
     'outcome','trialType','trialTypes','infoSide','reward',...
@@ -97,6 +83,4 @@ a = rmfield( a , 'trialSettings' );
 a.sessions=sessions;
 
 %%
-% save(fullfile(datapath,'behaviorMiceBpodTwoPort.mat'),'-struct','a','-v7.3');
-save(fullfile(datapath,'behaviorMiceBpodDf16NEW.mat'),'-struct','a','-v7.3');
-% save(fullfile(datapath,'behaviorMiceBpodCTHALO.mat'),'-struct','a','-v7.3');
+save(fullfile(datapath,'behaviorMiceBpodPorts6.mat'),'-struct','a','-v7.3');

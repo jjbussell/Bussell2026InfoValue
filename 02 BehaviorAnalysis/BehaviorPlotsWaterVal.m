@@ -4,11 +4,8 @@ close all;
 
 % datapath=findInfoseekData();
 datapath = 'D:\Bussell Dropbox\Jennifer Bussell\BpodInfoseek\';
-% datapath = 'D:\Bussell Dropbox\Bussell Lab\BpodInfoseek\'; 
-% datapath = 'C:\Users\Axel\Bussell Dropbox\Bussell Lab\BpodInfoseek\';
-% datapath = 'C:\Users\jbuss\Bussell Dropbox\Jennifer Bussell\BpodInfoseek\';
 
-% plotfolder=fullfile(datapath,'AllMicePlotsStay');
+
 plotfolder=fullfile(datapath,'AllMicePlotsWaterVal');
 pathname=plotfolder;
 
@@ -71,41 +68,10 @@ a.choiceLabels = {'InfoBig','InfoSmall','RandBig','RandSmall','BigWater','SmallW
 clear flag labels label;
 
 a.goodMice=ones(size(a.mouseList));
-% a.goodMice([27 34 35])=2;
-
-% load('MouseTypesAll.mat');
 
 flag='goodMice';
 labels={'GoodMice','BadMice'};
 label={'GoodBad'};
-
-% flag='imageMice';
-% labels={'WTMice','ImagedMice'};
-% label={'Imaged'};
-
-
-% a.sex=ones(size(a.mouseList));
-% a.sex([20 24 25 27 29 33 34 35 36 37])=2;
-% flag='sex';
-% labels={'Male','Female'};
-% label={'Sex'};
-
-% a.origMice=ones(size(a.mouseList));
-% a.origMice(15:end)=2;
-% flag='origMice';
-% labels={'Original','Later'};
-% label={'Orig'};
-
-% a.leavingMice=ones(size(unique(a.mouse)));
-% a.leavingMice([1 2 3 11 12])=2;
-% a.leavingMice([7 8])=3;
-% flag='leavingMice';
-% labels={'Tones','Always Water'};
-% label={'LeavingMice'};
-
-% flag='halo';
-% labels={'Halo','YFP'};
-% label={'Halo'};
 
 active=sum(a.(flag)>0);
 idx1=find(a.(flag)==1);
@@ -258,35 +224,6 @@ errorbar(15,mean(a.smallDwell1sec(idx1,1)),sem(a.smallDwell1sec(idx1,1)),'Color'
 xticks([1 3 5 7 9 11 13 15]);
 xticklabels({'Info','No Info','Big','Small','Info 1sec','No Info 1sec','Big 1sec','Small 1sec'});
 ylabel('Probability in correct reward port during delay, pre-reverse');
-% p1=signrank(a.infoDwell(idx1,1),a.randDwell(idx1,1));
-% p2=signrank(a.infoDwell1sec(idx1,1),a.randDwell1sec(idx1,1));
-% title([label1 ' sign rank p = ' num2str(p1) ' 1sec p= ' num2str(p2) 'also Friedman'])
-
-% ax = nsubplot(1,2,1,2);
-% ax.FontSize = 8;
-% ax.YTick = [0 0.500 1.000];
-% ax.YLim = [0 1];
-% ax.XLim = [0.5 7.5];
-% 
-% for mm = 1:numel(idx2rev)
-%     m=idx2rev(mm);
-%     plot([1 3],[a.infoDwell(m,1) a.randDwell(m,1)],'Color',grey,'LineStyle',':','LineWidth',2,'Marker','o','MarkerFaceColor',grey);
-%     plot([5 7],[a.infoDwell1sec(m,1) a.randDwell1sec(m,1)],'Color',grey,'LineStyle',':','LineWidth',2,'Marker','o','MarkerFaceColor',grey);
-% end
-% plot(1,mean(a.infoDwell(idx2,1)),'Color','k','LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerSize',8);
-% errorbar(1,mean(a.infoDwell(idx2,1)),sem(a.infoDwell(idx2,1)),'Color','k','LineWidth',2,'CapSize',25);
-% plot(3,mean(a.randDwell(idx2,1)),'Color','k','LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerSize',8);
-% errorbar(3,mean(a.randDwell(idx2,1)),sem(a.randDwell(idx2,1)),'Color','k','LineWidth',2,'CapSize',25);
-% plot(5,mean(a.infoDwell1sec(idx2,1)),'Color','k','LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerSize',8);
-% errorbar(5,mean(a.infoDwell1sec(idx2,1)),sem(a.infoDwell1sec(idx2,1)),'Color','k','LineWidth',2,'CapSize',25);
-% plot(7,mean(a.randDwell1sec(idx2,1)),'Color','k','LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerSize',8);
-% errorbar(7,mean(a.randDwell1sec(idx2,1)),sem(a.randDwell1sec(idx2,1)),'Color','k','LineWidth',2,'CapSize',25);
-% xticks([1 3 5 7]);
-% xticklabels({'Info','No Info','Info 1sec','No Info 1sec'});
-% ylabel('Probability in correct reward port during delay, pre-reverse');
-% p1=signrank(a.infoDwell(idx2,1),a.randDwell(idx2,1));
-% p2=signrank(a.infoDwell1sec(idx2,1),a.randDwell1sec(idx2,1));
-% title([label2 ' sign rank p = ' num2str(p1) ' 1sec p= ' num2str(p2) 'also Friedman']);
 
 saveas(fig,fullfile(pathname,[label{1} '_preRevDwellTimeQuant']),'pdf');
 
@@ -571,7 +508,7 @@ fig.PaperPosition = [0.5 0.5 10 7];
 set(fig,'renderer','painters');
 set(fig,'PaperOrientation','landscape');
 
-ax = nsubplot(1,2,1,1);
+ax = nsubplot(1,1,1,1);
 ax.FontSize = 8;
 % ax.YTick = [0 0.500 1.000 1.500];
 % ax.YLim = [0 1.5];
@@ -596,39 +533,9 @@ xticklabels({'Info','No Info','Big','Small'});
 ylabel('Reaction time in pre-reversal choice sessions');
 p1=signrank(a.preRevRxnMean(idx1rev,1),a.preRevRxnMean(idx1,2));
 p2=signrank(a.preRevRxnMean(idx1rev,3),a.preRevRxnMean(idx1,4));
-% p3=signrank(a.preRevRxnMean(idx1rev,1),a.preRevRxnMean(idx1,3));
-% p4=signrank(a.preRevRxnMean(idx1rev,2),a.preRevRxnMean(idx1,4));
 title([label1 ' sign rank info p = ' num2str(p1) ' sign rank water val p = '...
     num2str(p2)])
 
-% ax = nsubplot(1,2,1,2);
-% ax.FontSize = 8;
-% % ax.YTick = [0 0.500 1.000 1.500];
-% % ax.YLim = [0 1.5];
-% ax.XLim = [0.5 7.5];
-% for mm = 1:numel(idx2rev)
-%     m=idx2rev(mm);
-%     plot([1 3],[a.preRevRxnMean(m,1) a.preRevRxnMean(m,2)],'Color',grey,'LineStyle',':','LineWidth',2,'Marker','o','MarkerFaceColor',grey);
-%     plot([5 7],[a.preRevRxnMean(m,3) a.preRevRxnMean(m,4)],'Color',grey,'LineStyle',':','LineWidth',2,'Marker','o','MarkerFaceColor',grey);
-% 
-% end
-% plot(1,mean(a.preRevRxnMean(idx2rev,1),'omitnan'),'Color','k','LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerSize',8);
-% errorbar(1,mean(a.preRevRxnMean(idx2rev,1),'omitnan'),sem(a.preRevRxnMean(idx2rev,1)),'Color','k','LineWidth',2,'CapSize',25);
-% plot(3,mean(a.preRevRxnMean(idx2rev,2),'omitnan'),'Color','k','LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerSize',8);
-% errorbar(3,mean(a.preRevRxnMean(idx2rev,2),'omitnan'),sem(a.preRevRxnMean(idx2rev,2)),'Color','k','LineWidth',2,'CapSize',25);
-% plot(5,mean(a.preRevRxnMean(idx2rev,3),'omitnan'),'Color','k','LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerSize',8);
-% errorbar(5,mean(a.preRevRxnMean(idx2rev,3),'omitnan'),sem(a.preRevRxnMean(idx2rev,3)),'Color','k','LineWidth',2,'CapSize',25);
-% plot(7,mean(a.preRevRxnMean(idx2rev,4),'omitnan'),'Color','k','LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerSize',8);
-% errorbar(7,mean(a.preRevRxnMean(idx2rev,4),'omitnan'),sem(a.preRevRxnMean(idx2rev,4)),'Color','k','LineWidth',2,'CapSize',25);
-% xticks([1 3 5 7]);
-% xticklabels({'Info Forced','No Info Forced','Info Choice','No Info Choice'});
-% ylabel('Reaction time in pre-reversal choice sessions');
-% p1=signrank(a.preRevRxnMean(idx2rev,1),a.preRevRxnMean(idx2,2));
-% p2=signrank(a.preRevRxnMean(idx2rev,3),a.preRevRxnMean(idx2,4));
-% p3=signrank(a.preRevRxnMean(idx2rev,1),a.preRevRxnMean(idx2,3));
-% p4=signrank(a.preRevRxnMean(idx2rev,2),a.preRevRxnMean(idx2,4));
-% title([label1 ' sign rank forced p = ' num2str(p1) ' sign rank choice p = '...
-%     num2str(p2) ' info p=' num2str(p3) ' rand p=' num2str(p4)])
 
 saveas(fig,fullfile(pathname,[label{1} '_preRevReactionTime']),'pdf');
 
@@ -640,7 +547,7 @@ fig.PaperPosition = [0.5 0.5 10 7];
 set(fig,'renderer','painters');
 set(fig,'PaperOrientation','landscape');
 
-ax = nsubplot(1,2,1,1);
+ax = nsubplot(1,1,1,1);
 ax.FontSize = 8;
 % ax.YTick = [0 20 40];
 % ax.YLim = [0 40];
@@ -666,26 +573,6 @@ p1=signrank(a.preRevRewardRateCorrMean(idx1rev,1),a.preRevRewardRateCorrMean(idx
 p2=signrank(a.preRevRewardRateCorrMean(idx1rev,3),a.preRevRewardRateCorrMean(idx1,4));
 title([label1 ' info p = ' num2str(p1) ' water val p=' num2str(p2)])
 
-% ax = nsubplot(1,2,1,2);
-% ax.FontSize = 8;
-% ax.YTick = [0 20 40];
-% % ax.YLim = [0 40];
-% ax.XLim = [0.5 3.5];
-% 
-% for mm = 1:numel(idx2rev)
-%     m=idx2rev(mm);
-%     plot([1 3],[a.preRevRewardRateCorrMean(m,1) a.preRevRewardRateCorrMean(m,2)],'Color',grey,'LineStyle',':','LineWidth',2,'Marker','o','MarkerFaceColor',grey);
-% end
-% plot(1,mean(a.preRevRewardRateCorrMean(idx2rev,1),'omitnan'),'Color','k','LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerSize',10);
-% errorbar(1,mean(a.preRevRewardRateCorrMean(idx2rev,1),'omitnan'),sem(a.preRevRewardRateCorrMean(idx2rev,1)),'Color','k','LineWidth',2,'CapSize',25);
-% plot(3,mean(a.preRevRewardRateCorrMean(idx2rev,2),'omitnan'),'Color','k','LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerSize',10);
-% errorbar(3,mean(a.preRevRewardRateCorrMean(idx2rev,2),'omitnan'),sem(a.preRevRewardRateCorrMean(idx2rev,2)),'Color','k','LineWidth',2,'CapSize',25);
-% xticks([1 3]);
-% xticklabels({'Info','No Info'});
-% ylabel('Reward rate on correct trials pre-reversal');
-% p2=signrank(a.preRevRewardRateCorrMean(idx2rev,1),a.preRevRewardRateCorrMean(idx2,2));
-% title([label2 ' p = ' num2str(p2)])
-
 saveas(fig,fullfile(pathname,[label{1} '_preRevRewardRateCorr']),'pdf');
 
 %% PRE-REVERSAL REWARD RATE ALL
@@ -696,7 +583,7 @@ fig.PaperPosition = [0.5 0.5 10 7];
 set(fig,'renderer','painters');
 set(fig,'PaperOrientation','landscape');
 
-ax = nsubplot(1,2,1,1);
+ax = nsubplot(1,1,1,1);
 ax.FontSize = 8;
 % ax.YTick = [0 20 40];
 % ax.YLim = [0 40];
@@ -722,26 +609,6 @@ p1=signrank(a.preRevRewardRateMean(idx1rev,1),a.preRevRewardRateMean(idx1,2));
 p2=signrank(a.preRevRewardRateMean(idx1rev,3),a.preRevRewardRateMean(idx1,4));
 title([label1 ' info p = ' num2str(p1) ' water val p=' num2str(p2)])
 
-% ax = nsubplot(1,2,1,2);
-% ax.FontSize = 8;
-% ax.YTick = [0 20 40];
-% % ax.YLim = [0 40];
-% ax.XLim = [0.5 3.5];
-% 
-% for mm = 1:numel(idx2rev)
-%     m=idx2rev(mm);
-%     plot([1 3],[a.preRevRewardRateMean(m,1) a.preRevRewardRateMean(m,2)],'Color',grey,'LineStyle',':','LineWidth',2,'Marker','o','MarkerFaceColor',grey);
-% end
-% plot(1,mean(a.preRevRewardRateMean(idx2rev,1),'omitnan'),'Color','k','LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerSize',10);
-% errorbar(1,mean(a.preRevRewardRateMean(idx2rev,1),'omitnan'),sem(a.preRevRewardRateMean(idx2rev,1)),'Color','k','LineWidth',2,'CapSize',25);
-% plot(3,mean(a.preRevRewardRateMean(idx2rev,2),'omitnan'),'Color','k','LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerSize',10);
-% errorbar(3,mean(a.preRevRewardRateMean(idx2rev,2),'omitnan'),sem(a.preRevRewardRateMean(idx2rev,2)),'Color','k','LineWidth',2,'CapSize',25);
-% xticks([1 3]);
-% xticklabels({'Info','No Info'});
-% ylabel('Reward rate on all trials pre-reversal');
-% p2=signrank(a.preRevRewardRateMean(idx2rev,1),a.preRevRewardRateMean(idx2,2));
-% title([label2 ' p = ' num2str(p2)])
-
 saveas(fig,fullfile(pathname,[label{1} '_preRevRewardRate']),'pdf');
 
 %% PRE-REVERSAL PERCENT CORRECT
@@ -752,7 +619,7 @@ fig.PaperPosition = [0.5 0.5 10 7];
 set(fig,'renderer','painters');
 set(fig,'PaperOrientation','landscape');
 
-ax = nsubplot(1,2,1,1);
+ax = nsubplot(1,1,1,1);
 ax.FontSize = 8;
 ax.YTick = [0 0.25 0.5 0.75 1];
 ax.YLim = [0 1];
@@ -777,25 +644,6 @@ ylabel('% correct pre-reversal');
 p1=signrank(a.preRevCorrectMean(idx1rev,1),a.preRevCorrectMean(idx1,2));
 title([label1 ' p = ' num2str(p1)])
 
-% ax = nsubplot(1,2,1,2);
-% ax.FontSize = 8;
-% ax.YTick = [0 0.25 0.5 0.75 1];
-% ax.YLim = [0 1];
-% ax.XLim = [0.5 3.5];
-% 
-% for mm = 1:numel(idx2rev)
-%     m=idx2rev(mm);
-%     plot([1 3],[a.preRevCorrectMean(m,1) a.preRevCorrectMean(m,2)],'Color',grey,'LineStyle',':','LineWidth',2,'Marker','o','MarkerFaceColor',grey);
-% end
-% plot(1,mean(a.preRevCorrectMean(idx2rev,1),'omitnan'),'Color','k','LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerSize',10);
-% errorbar(1,mean(a.preRevCorrectMean(idx2rev,1),'omitnan'),sem(a.preRevCorrectMean(idx2rev,1)),'Color','k','LineWidth',2,'CapSize',25);
-% plot(3,mean(a.preRevCorrectMean(idx2rev,2),'omitnan'),'Color','k','LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerSize',10);
-% errorbar(3,mean(a.preRevCorrectMean(idx2rev,2),'omitnan'),sem(a.preRevCorrectMean(idx2rev,2)),'Color','k','LineWidth',2,'CapSize',25);
-% xticks([1 3]);
-% xticklabels({'Info','No Info'});
-% ylabel('% correct pre-reversal');
-% p2=signrank(a.preRevCorrectMean(idx2rev,1),a.preRevCorrectMean(idx2,2));
-% title([label2 ' p = ' num2str(p2)])
 
 saveas(fig,fullfile(pathname,[label{1} '_preRevCorrect']),'pdf');
 
@@ -821,7 +669,7 @@ fig.PaperPosition = [0.5 0.5 10 7];
 set(fig,'renderer','painters');
 set(fig,'PaperOrientation','landscape');
 
-ax = nsubplot(1,2,1,1);
+ax = nsubplot(1,1,1,1);
 ax.FontSize = 8;
 % ax.YTick = [0 0.500 1.000 1.500];
 % ax.YLim = [0 2];
@@ -845,26 +693,6 @@ p3=signrank(a.reversalRxn(idx1rev,5),a.reversalRxn(idx1,6));
 p4=signrank(a.reversalRxn(idx1rev,7),a.reversalRxn(idx1,8));
 title([label1 ' info pre p = ' num2str(p1) ' info post p = ' num2str(p2) ' waterval pre p=' num2str(p3) ' waterval post p=' num2str(p4)])
 
-% ax = nsubplot(1,2,1,2);
-% ax.FontSize = 8;
-% ax.YTick = [0 0.500 1.000 1.500];
-% ax.YLim = [0 2];
-% ax.XLim = [0.5 7.5];
-% 
-% for mm = 1:numel(idx2rev)
-%     m=idx2rev(mm);
-%     plot([1 3],a.reversalRxn(m,(1:2)),'Color',grey,'LineStyle',':','LineWidth',2,'Marker','o','MarkerFaceColor',grey);
-%     plot([5 7],a.reversalRxn(m,(3:4)),'Color',grey,'LineStyle',':','LineWidth',2,'Marker','o','MarkerFaceColor',grey);
-% end
-% plot([1 3 5 7],mean(a.reversalRxn(idx2rev,:),'omitnan'),'o','MarkerFaceColor','k','MarkerSize',8);
-% errorbar([1 3 5 7],mean(a.reversalRxn(idx2rev,:),'omitnan'),sem(a.reversalRxn(idx2rev,:)),'Color','k','LineWidth',2,'CapSize',25);
-% xticks([1 3 5 7]);
-% xticklabels({'Info Pre','No Info Pre','Info Post','No Info Post'});
-% ylabel('Reaction time across reversal choice sessions');
-% p1=signrank(a.reversalRxn(idx2rev,1),a.reversalRxn(idx2,2));
-% p2=signrank(a.reversalRxn(idx2rev,3),a.reversalRxn(idx2,4));
-% title([label1 ' pre p = ' num2str(p1) ' post p = ' num2str(p2)])
-
 saveas(fig,fullfile(pathname,[label{1} '_ReversalReactionTime']),'pdf');
 
 %% REVERSAL REWARD RATE CORR
@@ -879,7 +707,7 @@ fig.PaperPosition = [0.5 0.5 10 7];
 set(fig,'renderer','painters');
 set(fig,'PaperOrientation','landscape');
 
-ax = nsubplot(1,2,1,1);
+ax = nsubplot(1,1,1,1);
 ax.FontSize = 8;
 % ax.YTick = [0 0.500 1.000 1.500];
 % ax.YLim = [0 2];
@@ -903,34 +731,13 @@ p3=signrank(a.reversalRewardRateCorr(idx1rev,5),a.reversalRewardRateCorr(idx1,6)
 p4=signrank(a.reversalRewardRateCorr(idx1rev,7),a.reversalRewardRateCorr(idx1,8));
 title([label1 ' info pre p = ' num2str(p1) ' info post p = ' num2str(p2) ' waterval pre p=' num2str(p3) ' waterval post p=' num2str(p4)])
 
-% ax = nsubplot(1,2,1,2);
-% ax.FontSize = 8;
-% % ax.YTick = [0 0.500 1.000 1.500];
-% % ax.YLim = [0 2];
-% ax.XLim = [0.5 7.5];
-% 
-% for mm = 1:numel(idx2rev)
-%     m=idx2rev(mm);
-%     plot([1 3],a.reversalRewardRateCorr(m,(1:2)),'Color',grey,'LineStyle',':','LineWidth',2,'Marker','o','MarkerFaceColor',grey);
-%     plot([5 7],a.reversalRewardRateCorr(m,(3:4)),'Color',grey,'LineStyle',':','LineWidth',2,'Marker','o','MarkerFaceColor',grey);
-% end
-% plot([1 3 5 7],mean(a.reversalRewardRateCorr(idx2rev,:),'omitnan'),'o','MarkerFaceColor','k','MarkerSize',8);
-% errorbar([1 3 5 7],mean(a.reversalRewardRateCorr(idx2rev,:),'omitnan'),sem(a.reversalRewardRateCorr(idx2rev,:)),'Color','k','LineWidth',2,'CapSize',25);
-% xticks([1 3 5 7]);
-% xticklabels({'Info Pre','No Info Pre','Info Post','No Info Post'});
-% ylabel('Reward rate on correct trials across reversal choice sessions (mL/min)');
-% p1=signrank(a.reversalRewardRateCorr(idx2rev,1),a.reversalRewardRateCorr(idx2,2));
-% p2=signrank(a.reversalRewardRateCorr(idx2rev,3),a.reversalRewardRateCorr(idx2,4));
-% title([label1 ' pre p = ' num2str(p1) ' post p = ' num2str(p2)])
-
 saveas(fig,fullfile(pathname,[label{1} '_ReversalRewardRateCorr']),'pdf');
 
 %% REVERSAL REWARD RATE
 
 [a.reversalRewardRatepval1, tbl, stats] = friedman(a.reversalRewardRate(idx1,:), 1,'off');
 a.reversalRewardRateComp1 = multcompare(stats,'Display','off');
-% [a.reversalRewardRatepval2, tbl, stats] = friedman(a.reversalRewardRate(idx2,:), 1,'off');
-% a.reversalRewardRateComp2 = multcompare(stats,'Display','off');
+
 
 fig=figure();
 fig.PaperUnits = 'inches';
@@ -938,7 +745,7 @@ fig.PaperPosition = [0.5 0.5 10 7];
 set(fig,'renderer','painters');
 set(fig,'PaperOrientation','landscape');
 
-ax = nsubplot(1,2,1,1);
+ax = nsubplot(1,1,1,1);
 ax.FontSize = 8;
 % ax.YTick = [0 0.500 1.000 1.500];
 % ax.YLim = [0 2];
@@ -962,34 +769,13 @@ p3=signrank(a.reversalRewardRate(idx1rev,5),a.reversalRewardRate(idx1,6));
 p4=signrank(a.reversalRewardRate(idx1rev,7),a.reversalRewardRate(idx1,8));
 title([label1 ' info pre p = ' num2str(p1) ' info post p = ' num2str(p2) ' waterval pre p=' num2str(p3) ' waterval post p=' num2str(p4)])
 
-% ax = nsubplot(1,2,1,2);
-% ax.FontSize = 8;
-% % ax.YTick = [0 0.500 1.000 1.500];
-% % ax.YLim = [0 2];
-% ax.XLim = [0.5 7.5];
-% 
-% for mm = 1:numel(idx2rev)
-%     m=idx2rev(mm);
-%     plot([1 3],a.reversalRewardRate(m,(1:2)),'Color',grey,'LineStyle',':','LineWidth',2,'Marker','o','MarkerFaceColor',grey);
-%     plot([5 7],a.reversalRewardRate(m,(3:4)),'Color',grey,'LineStyle',':','LineWidth',2,'Marker','o','MarkerFaceColor',grey);
-% end
-% plot([1 3 5 7],mean(a.reversalRewardRate(idx2rev,:),'omitnan'),'o','MarkerFaceColor','k','MarkerSize',8);
-% errorbar([1 3 5 7],mean(a.reversalRewardRate(idx2rev,:),'omitnan'),sem(a.reversalRewardRate(idx2rev,:)),'Color','k','LineWidth',2,'CapSize',25);
-% xticks([1 3 5 7]);
-% xticklabels({'Info Pre','No Info Pre','Info Post','No Info Post'});
-% ylabel('Reward rate across reversal choice sessions (mL/min)');
-% p1=signrank(a.reversalRewardRate(idx2rev,1),a.reversalRewardRate(idx2,2));
-% p2=signrank(a.reversalRewardRate(idx2rev,3),a.reversalRewardRate(idx2,4));
-% title([label1 ' pre p = ' num2str(p1) ' post p = ' num2str(p2) ' friedman p=' num2str(a.reversalRewardRatepval2)])
-
 saveas(fig,fullfile(pathname,[label{1} '_ReversalRewardRate']),'pdf');
 
 %% REVERSAL PERCENT CORRECT
 
 [a.reversalCorrectpval1, tbl, stats] = friedman(a.reversalCorrect(idx1rev,:), 1,'off');
 a.reversalCorrectComp1 = multcompare(stats,'Display','off');
-% [a.reversalCorrectpval2, tbl, stats] = friedman(a.reversalCorrect(idx2rev,:), 1,'off');
-% a.reversalCorrectComp2 = multcompare(stats,'Display','off');
+
 
 fig=figure();
 fig.PaperUnits = 'inches';
@@ -997,7 +783,7 @@ fig.PaperPosition = [0.5 0.5 10 7];
 set(fig,'renderer','painters');
 set(fig,'PaperOrientation','landscape');
 
-ax = nsubplot(1,2,1,1);
+ax = nsubplot(1,1,1,1);
 ax.FontSize = 8;
 % ax.YTick = [0 0.500 1.000 1.500];
 % ax.YLim = [0 2];
@@ -1020,27 +806,6 @@ p2=signrank(a.reversalCorrect(idx1rev,3),a.reversalCorrect(idx1,4));
 p3=signrank(a.reversalCorrect(idx1rev,5),a.reversalCorrect(idx1,6));
 p4=signrank(a.reversalCorrect(idx1rev,7),a.reversalCorrect(idx1,8));
 title([label1 ' info pre p = ' num2str(p1) ' info post p = ' num2str(p2) ' waterval pre p=' num2str(p3) ' waterval post p=' num2str(p4)])
-
-
-% ax = nsubplot(1,2,1,2);
-% ax.FontSize = 8;
-% ax.YTick = [0 0.25 0.5 0.75 1];
-% ax.YLim = [0 1];
-% ax.XLim = [0.5 7.5];
-% 
-% for mm = 1:numel(idx2rev)
-%     m=idx2rev(mm);
-%     plot([1 3],a.reversalCorrect(m,(1:2)),'Color',grey,'LineStyle',':','LineWidth',2,'Marker','o','MarkerFaceColor',grey);
-%     plot([5 7],a.reversalCorrect(m,(3:4)),'Color',grey,'LineStyle',':','LineWidth',2,'Marker','o','MarkerFaceColor',grey);
-% end
-% plot([1 3 5 7],mean(a.reversalCorrect(idx2rev,:),'omitnan'),'o','MarkerFaceColor','k','MarkerSize',8);
-% errorbar([1 3 5 7],mean(a.reversalCorrect(idx2rev,:),'omitnan'),sem(a.reversalCorrect(idx2rev,:)),'Color','k','LineWidth',2,'CapSize',25);
-% xticks([1 3 5 7]);
-% xticklabels({'Info Pre','No Info Pre','Info Post','No Info Post'});
-% ylabel('% correct across reversal');
-% p1=signrank(a.reversalCorrect(idx2rev,1),a.reversalCorrect(idx2,2));
-% p2=signrank(a.reversalCorrect(idx2rev,3),a.reversalCorrect(idx2,4));
-% title([label1 ' pre p = ' num2str(p1) ' post p = ' num2str(p2) ' friedman p=' num2str(a.reversalCorrectpval2)])
 
 saveas(fig,fullfile(pathname,[label{1} '_ReversalCorrect']),'pdf');
 

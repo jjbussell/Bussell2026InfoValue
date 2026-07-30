@@ -1,10 +1,14 @@
-a1=a; clear a;
+%% LOADING DATA FILES
 
+% a1=a; clear a; % uncomment to begin from already in memory bpod data file
 
+% To load data into memory:
 % clear; close all;
 % 
-% datapath=findInfoseekData();
-% 
+% datapath=findInfoseekData(); % locates the information seeking data files
+% on disk
+
+% Loads the three data files if needed
 % a1=load('behaviorMiceBpodPorts6.mat');
 % a2=load('behaviorMicePreBpodPorts6_JB334_JB339.mat');
 % a3=load('behaviorMicePreBpodPorts6.mat');
@@ -84,7 +88,6 @@ a1.odor2LeavingTime(:,[2 3]) = [a1.file a1.trial];
 % a2.centerEntryFirst=a2.firstCenterEntry;
 % a3.centerEntryFirst=a3.firstCenterEntry;
 % 
-% %% MAKING FILE NUMBERING SEQUENTIAL
 % 
 % a2.file=a2.file+max(a1.file);
 % a3.file=a3.file+(max(a1.file)+max(a2.file));
@@ -107,7 +110,8 @@ a=a1;
 % clear a1 a2 a3;
 clear a1
 % 
-% % a=load('infoSeekData_ALLBEHAVIOR6.mat');
+% % a=load('infoSeekData_ALLBEHAVIOR6.mat'); % to load all of the data
+% together with this loading step already completed
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -355,38 +359,15 @@ a.reverseCorr=a.reverse(a.correct==1);
 %% MOUSE CATEGORIES
 
 a.choiceMice = find(a.choiceMice);
-
-% dayDates = datetime(unique(a.day),'InputFormat','yyyyMMdd');
-% toDay = string(datetime(max(dayDates),'Format','yyyyMMdd'));
-% a.today = a.day == toDay;
-% a.currentMiceList = unique(a.mouse(a.today==1));
-% a.currentMice = find(ismember(a.mouseList,a.currentMiceList));
-
 a.choiceMiceList = a.mouseList(a.choiceMice);
 a.choiceMouseCt = numel(a.choiceMice);
 
 a.reverseMice = find(a.reverseMice);
 a.reverseMiceList  = a.mouseList(a.reverseMice);
 
-% a.timeoutMice=[];
-
-% SILENCING MICE
-% 1 = halo, 2 = YFP
-% a.halo = zeros(a.mouseCt,1);
-% a.halo([1 2 6 7 10 11 12])=1;
-% a.halo([3 4 5 8 9])=2;
-
 
 %% DAYS AROUND FIRST REVERSAL
-% want: before and after first reversal 3 days to show pref and for "only pre-reverse analysis"
-% a.reverseAround=NaN(numel(a.reverseMice),6);
-% if ~isempty(a.reverseMice)
-%     for m=1:numel(a.reverseMice)
-%         mm=a.reverseMice(m);
-%         dd=a.reverseDay{mm,1};
-%         a.reverseAround(m,:) = (dd-3:dd+2);
-%     end
-% end
+
 
 a.reverseAround=NaN(numel(a.mouseList),6);
 for m=1:numel(a.mouseList)
@@ -402,22 +383,6 @@ end
 %% DAYS AROUND FIRST REVERSAL (last 2 before, last 2 after)
 
 % 2 days before reversal, last 2 days after reversal
-% if ~isempty(a.reverseMice)
-%     a.reversalDays = NaN(numel(a.reverseMice),4);
-%     for m = 1:numel(a.reverseMice)
-%         mm=a.reverseMice(m);
-%         a.reversalDays(m,1) = a.reverseDay{mm,1}-2; % 2 days prior to 1st reversal
-%         a.reversalDays(m,2) = a.reverseDay{mm,1}-1;
-%         if ~isempty(a.reverseDay{mm,2})
-%             a.reversalDays(m,3) = a.reverseDay{mm,2}-2;
-%             a.reversalDays(m,4) = a.reverseDay{mm,2}-1;
-%         else
-%             a.reversalDays(m,3) = a.lastParamDay(mm)-1;
-%             a.reversalDays(m,4) = a.lastParamDay(mm);
-%         end
-%     end
-% end
-
 a.reversalDays = NaN(numel(a.mouseList),4);
 for m=1:numel(a.mouseList)
    if ismember(m,a.reverseMice)
@@ -685,6 +650,7 @@ a.preRevRxnIdx=(a.preRevRxnMean(:,4)-a.preRevRxnMean(:,3))./a.preRevRxnMean(:,3)
 
 
 %% STATS for last 2 days pre-reversal, info vs rand x days
+% to ensure behavior did not meaningfully differ session-to-session
 
 % preRevANOVA
 % p1:conditions are different (info vs rand or early vs late)
@@ -945,6 +911,7 @@ a.reversalEarlyLicks=[a.reversalInfoEarlyLicks(:,1) a.reversalRandEarlyLicks(:,1
 a.reversalLicks=[a.reversalInfoBigLicks(:,1) a.reversalRandDLicks(:,1) a.reversalRandCLicks(:,1) a.reversalInfoSmallLicks(:,1) a.reversalInfoBigLicks(:,2) a.reversalRandDLicks(:,2) a.reversalRandCLicks(:,2) a.reversalInfoSmallLicks(:,2)];
 
 %% STATS for across reversal, info vs rand x 2 days before, 2 days after
+% to ensure behavior did not meaningfully differ session-to-session
 
 % revANOVA
 % p1: are conditions different (info across reversal vs no info across
@@ -1279,474 +1246,7 @@ for m = 1:a.mouseCt
 %     a.initialIncompleteInfoRand(m,2) = sum(ismember(mouseInitialOutcomes,[7 9 18 20])) / sum(ismember(mouseInitialOutcomes,[6 7 8 9 17 18 19 20])); 
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% NOTHING MORE AFTER THIS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-%% ANOVA STATISTICS
-
-% data=[a.reversalRewardRateCorrInfo a.reversalRewardRateCorrRand];
-% [ranova_days, ranova_conditions, ranova_both] =revANOVA(data);
-% 
-% data=[a.preRevRxnInfoForced a.preRevRxnRandForced];
-% tbl = array2table(data, 'VariableNames', strcat('V', string(1:size(data, 2))));
-% num_days = 3;
-% num_conditions = 2;
-% % Generate the within-subject design
-% Days = repmat((1:num_days)', num_conditions, 1);
-% Conditions = repelem((1:num_conditions)', num_days);
-% WithinDesign = table(Days, Conditions, 'VariableNames', {'Day', 'Condition'});
-% rm = fitrm(tbl, 'V1-V6 ~ 1', 'WithinDesign', WithinDesign);
-% ranova_days = ranova(rm, 'WithinModel', 'Day');
-% ranova_conditions = ranova(rm, 'WithinModel', 'Condition');
-% ranova_both = ranova(rm, 'WithinModel', 'Condition*Day')
-% 
-% pValue_Days = ranova_days.pValue(3)
-% pValue_Condition = ranova_conditions.pValue(3)
-% pvalue_Interaction = ranova_both.pValue(y)
-
-% data=[a.preRevRxnInfoForced];
-% tbl = array2table(data, 'VariableNames', strcat('V', string(1:size(data, 2))));
-% num_days = 3;
-% num_conditions = 2;
-% % Generate the within-subject design
-% Days = repmat((1:num_days)', num_conditions, 1);
-% Conditions = repelem((1:num_conditions)', num_days);
-% Days=(1:num_days)';
-% WithinDesign = table(Days, 'VariableNames', {'Days'});
-% rm = fitrm(tbl, 'V1-V3 ~ 1', 'WithinDesign', WithinDesign);
-% ranova_days = ranova(rm, 'WithinModel', 'Days');
-% % ranova_conditions = ranova(rm, 'WithinModel', 'Condition');
-% 
-% pValue_Days = ranova_days.pValue(3)
-% % pValue_Condition = ranova_conditions.pValue(3)
-
-
-%% PREFERENCE AROUND FIRST REVERSAL, by mouse and by day NOW BAD
-% 
-% a.=NaN(numel(a.reverseMice),6);
-% for m=1:numel(a.reverseMice)
-%     mm=a.reverseMice(m);
-%    dd=a.reverseDay{m,1};
-%    for n=1:3
-%        a.reverseAround(m,4-n) = a.daySummary.percentIIS{mm,dd-n};
-%        d=4-n;
-%        ok=a.trialType == 1 & a.trialTypes == 5&a.mouseDay == dd-n & a.mice(:,mm) == 1 & a.correct == 1;
-%        a.choicesAround{m,d}=a.choice_all(ok);
-%    end
-%    for k=0:2
-%        a.reverseAround(m,4+k) = a.daySummary.percentIIS{mm,dd+k};
-%        d=4+k;
-%        ok=a.trialType == 1 & a.trialTypes == 5&a.mouseDay == dd+k & a.mice(:,mm) == 1 & a.correct == 1;
-%        a.choicesAround{m,d}=a.choice_all(ok);
-%    end
-% end
-% 
-% for d=1:size(a.choicesAround,2)
-%     choices=vertcat(a.choicesAround{:,d});
-%    [a.choiceAroundMean(1,d), a.choiceAroundCI(1:2,d)] = binofit(sum(choices==1),numel(choices));
-% end
-
-%% DAYS AROUND REVERSES
-
-% if ~isempty(a.reverseMice)
-%     a.reversalDays = NaN(numel(a.reverseMice),4);
-%     for m = 1:numel(a.reverseMice)
-%         mm=a.reverseMice(m);
-%         a.reversalDays(m,1) = a.reverseDay{mm,1}-1; % day prior to 1st reversal
-%         if size(cell2mat(a.reverseDay(mm,:)),2) > 1
-%             if ~isempty(a.reverseDay{mm,2})
-%             a.reversalDays(m,2) = a.reverseDay{mm,2}-1; % day prior to second reversal
-%             % last day of second reversal (either r+3/last day or last day before get
-%             % ready for values)
-%                 if ~isempty(a.reverseDay{mm,3})
-%                     a.reversalDays(m,3) = a.reverseDay{mm,3}-1; % day prior to third reversal
-%                     a.reversalDays(m,4) = a.lastParamDay(mm);
-%                 else
-%                     if a.reverseDay{mm,2}+3 >= a.lastParamDay(mm)
-%                         a.reversalDays(m,3) = a.lastParamDay(mm);
-%                     else
-%                         a.reversalDays(m,3) = a.reverseDay{mm,2}+3;
-%                     end
-%                 end
-%             end
-%         end
-%     end
-% end
-
-% %% BEHAVIOR ACROSS REVERSALS (PER DAY, PER REVERSAL, PER SIDE). Relative to current info side
-% 
-% % for per reversal and per side, use infoside,a.reverse (unless need to
-% % sort and pull first 300 OR want only a single day)
-% 
-% % reward rate, % trials leaving
-% 
-% % for per day, use a.mouseDays/a.mouseDayCt and a.firstChoiceDay,
-% % a.reversalDays,a.lastParamDay = max(a.reversalDays?)
-% 
-% % make cell array of relevant days for each mouse and then can just plot
-% % these
-% % a.choiceDays
-% 
-% if ~isempty(a.reverseMice)
-%     for m = 1:numel(a.reverseMice)
-%         mm=a.reverseMice(m);
-%         a.choiceDays{1,:,m} = a.firstChoiceDay(mm):a.reversalDays(m,1);
-%         a.choiceDays{2,:,m} = a.reversalDays(m,1)+1:a.reversalDays(m,2);
-%         a.choiceDays{3,:,m} = a.reversalDays(m,2)+1:a.reversalDays(m,3);
-%         a.choiceDays{4,:,m} = a.reversalDays(m,3)+1:a.reversalDays(m,4);
-%         
-%         choiceDays = a.choiceDays(:,:,m);
-%         a.allChoiceDays{m,:} = [choiceDays{:}];
-%         
-%         days = a.allChoiceDays{m,:};
-%         days=days(~isnan(days));
-%         a.choiceDayPref{m,:} = [a.daySummary.percentInfo{mm,days}];
-%         a.choiceDayEarlyPref{m,:} = [a.daySummary.percentInfoEarly{mm,days}];
-%         a.choiceDayLatePref{m,:} = [a.daySummary.percentInfoLate{mm,days}];
-%         a.choiceDayInfoSmallNP{m,:} = [a.daySummary.infoSmallNP{mm,days}];
-%         a.choiceDayleavingPercentIDX{m,:} = [a.daySummary.leavingPercentIDX{mm,days}];
-%         a.choiceDayRewardRateInfo{m,:} = [a.daySummary.rewardRateInfo{mm,days}];
-%         a.choiceDayRewardRateRand{m,:} = [a.daySummary.rewardRateInfo{mm,days}];
-%         a.choiceDayRewardRateIdx{m,:} = [a.daySummary.rewardRateIdx{mm,days}];
-%     end
-% end
-% 
-% %% EARLY LICKS AND REACTION SPEED BY REVERSAL
-% 
-% % NEED TO FINISH
-% 
-% % use trials to count
-% 
-% %%
-% % RELATIVE TO CURRENT INFO SIDE
-% 
-% % CHANGE THIS ACROSS ALL REVERSALS
-% 
-% if ~isempty(a.reverseMice)
-%     for m=1:a.mouseCt  
-%         ok1 = a.mice(:,m) == 1 & a.trialType == 2 & a.correct == 1 & a.reverse == 1;
-%         corrIdx=find(a.correct);
-%         ok1Idx = find(ok1);
-%         [~,sort1idx] = sort(a.mouseDay(ok1==1));
-%         ok1sorted = ok1Idx(sort1idx);    
-%         okInfoPreRevIdx = find(ok1sorted,300,'last');
-%         okInfoPreRev = ok1sorted(okInfoPreRevIdx);
-%         okInfoPreRevCorr=find(ismember(corrIdx,okInfoPreRev));
-%         ok2 = a.mice(:,m) == 1 & a.trialType == 3 & a.correct == 1 & a.reverse == 1;
-%         ok2Idx = find(ok2);
-%         [~,sort2idx] = sort(a.mouseDay(ok2==1));
-%         ok2sorted = ok2Idx(sort2idx);     
-%         okRandPreRevIdx = find(ok2sorted,300,'last');
-%         okRandPreRev = ok2sorted(okRandPreRevIdx);
-%         okRandPreRevCorr=find(ismember(corrIdx,okRandPreRev));
-%         ok3 = a.mice(:,m) == 1 & a.trialType == 2 & a.correct == 1 & a.reverse == -1;
-%         ok3Idx = find(ok3);
-%         [~,sort3idx] = sort(a.mouseDay(ok3==1));
-%         ok3sorted = ok3Idx(sort3idx);     
-%         okInfoPostRevIdx = find(ok3sorted,300,'last');
-%         okInfoPostRev = ok3sorted(okInfoPostRevIdx);
-%         okInfoPostRevCorr=find(ismember(corrIdx,okInfoPostRev));
-%         ok4 = a.mice(:,m) == 1 & a.trialType == 3 & a.correct == 1 & a.reverse == -1;
-%         ok4Idx = find(ok4);
-%         [~,sort4idx] = sort(a.mouseDay(ok4==1));
-%         ok4sorted = ok4Idx(sort4idx); 
-%         okRandPostRevIdx = find(ok4sorted,300,'last');
-%         okRandPostRev = ok4sorted(okRandPostRevIdx);
-%         okRandPostRevCorr=find(ismember(corrIdx,okRandPostRev));
-%        % pre-reverse, INFO
-%        a.preRevEarlyLicks(m,1) = mean(a.earlyInfoLicks(okInfoPreRevCorr),'omitnan');
-%        a.preRevRxnSpeed(m,1) = mean(a.rxnSpeed(okInfoPreRev));
-%        a.preRevRxn(m,1) = mean(a.rxn(okInfoPreRev));
-%        % pre-reverse, NO INFO
-%        a.preRevEarlyLicks(m,2) = mean(a.earlyRandLicks(okRandPreRevCorr));
-%        a.preRevRxnSpeed(m,2) = mean(a.rxnSpeed(okRandPreRev));
-%        a.preRevRxn(m,2) = mean(a.rxn(okRandPreRev));
-%        % pre-reverse diff p-val
-%        [~,a.preRevEarlyLicks(m,3)] = ttest2(a.earlyInfoLicks(okInfoPreRevCorr),a.earlyRandLicks(okRandPreRevCorr));
-%        [~,a.preRevRxnSpeed(m,3)] = ttest2(a.rxnSpeed(okInfoPreRev),a.rxnSpeed(okRandPreRev));
-%        % post-reverse, INFO
-%        a.postRevEarlyLicks(m,1) = mean(a.earlyInfoLicks(okInfoPostRevCorr));
-%        a.postRevRxnSpeed(m,1) = mean(a.rxnSpeed(okInfoPostRev));
-%        a.postRevRxn(m,1) = mean(a.rxn(okInfoPostRev));
-%        % post-reverse, NO INFO
-%        a.postRevEarlyLicks(m,2) = mean(a.earlyRandLicks(okRandPostRevCorr));
-%        a.postRevRxnSpeed(m,2) = mean(a.rxnSpeed(okRandPostRev));
-%        a.postRevRxn(m,2) = mean(a.rxn(okRandPostRev));
-%        % post-reverse diff p-val
-%        [~,a.postRevEarlyLicks(m,3)] = ttest2(a.earlyInfoLicks(okInfoPostRevCorr),a.earlyRandLicks(okRandPostRevCorr));
-%        [~,a.postRevRxnSpeed(m,3)] = ttest2(a.rxnSpeed(okInfoPostRev),a.rxnSpeed(okRandPostRev));   
-%        % pre-reverse
-%        a.earlyLickIdx(m,1) = (a.preRevEarlyLicks(m,1)-a.preRevEarlyLicks(m,2))/(a.preRevEarlyLicks(m,1)+a.preRevEarlyLicks(m,2));
-%        a.rxnSpeedIdx(m,1) = (a.preRevRxnSpeed(m,1)-a.preRevRxnSpeed(m,2))/(a.preRevRxnSpeed(m,1)+a.preRevRxnSpeed(m,2));
-%        % post-reverse
-%        a.earlyLickIdx(m,2) = (a.postRevEarlyLicks(m,1)-a.postRevEarlyLicks(m,2))/(a.postRevEarlyLicks(m,1)+a.postRevEarlyLicks(m,2));
-%        a.rxnSpeedIdx(m,2) = (a.postRevRxnSpeed(m,1)-a.postRevRxnSpeed(m,2))/(a.postRevRxnSpeed(m,1)+a.postRevRxnSpeed(m,2));
-%        % info Pre and Post
-%     end
-% 
-% end
-% 
-% 
-% %% CHOICE, RXN SPEED, EARLY LICKS, AND REWARD RATE AROUND REVERSALS BY IIS
-% 
-% if ~isempty(a.reverseMice)
-%     a.reversalPrefs = NaN(numel(a.reverseMice),4);
-%     a.reversalPrefsCurr = NaN(numel(a.reverseMice),4);
-%     a.reversalRxn = NaN(numel(a.reverseMice),4);
-%     a.reversalLicks = NaN(numel(a.reverseMice),4);
-%     a.reversalMultiPrefs = NaN(numel(a.reverseMice),8);
-%     for m = 1:numel(a.reverseMice)
-%         mm = a.reverseMice(m);
-%         for n = 1:4
-%             if ~isnan(a.reversalDays(m,n))
-%                 day = a.reversalDays(m,n);
-%             else
-%                 if n>1 & a.mouseDayCt(mm)>a.reversalDays(m,n-1)
-% %                     day = a.reversalDays(m,n-1)+3;
-%                     day = a.mouseDayCt(mm);
-%                 else
-%                     day = 0;
-%                 end
-%             end
-%             if ~isnan(a.reversalDays(m,n))
-%                 a.reversalPrefs(m,n) = a.daySummary.percentIIS{mm,day};
-%                 a.reversalPrefsCurr(m,n) = a.daySummary.percentInfo{mm,day};
-%                 a.reversalPrefsEarly(m,n) = a.daySummary.percentInfoEarly{mm,day};
-%                 a.reversalPrefsLate(m,n) = a.daySummary.percentInfoLate{mm,day};
-%                 if n == 1
-%                     for k = 1:4
-% %                         if ~isempty(a.daySummary.percentIIS{mm,a.reversalDays(m,n)+k-1})
-%                         if a.mouseDayCt(mm)>(day+k-1)
-%                             a.reversalMultiPrefs(m,k) = a.daySummary.percentIIS{mm,a.reversalDays(m,n)+k-1};
-%                             a.reversalMultiPrefsCurr(m,k) = a.daySummary.percentInfo{mm,a.reversalDays(m,n)+k-1};
-%                         end
-%                     end
-%                 elseif n==2
-%                     for k = 1:4
-% %                         if ~isempty(a.daySummary.percentIIS{mm,a.reversalDays(m,n)+k-1})
-%                         if a.mouseDayCt(mm)>(day+k-1)
-%                             a.reversalMultiPrefs(m,k+4) = a.daySummary.percentIIS{mm,a.reversalDays(m,n)+k-1};
-%                             a.reversalMultiPrefsCurr(m,k+4) = a.daySummary.percentInfo{mm,a.reversalDays(m,n)+k-1};
-%                         end
-%                     end
-%                 end
-%             else
-%                 if n>1 & day>0
-%                     a.reversalPrefs(m,n) = a.daySummary.percentIIS{mm,day};
-%                     a.reversalPrefsCurr(m,n) = a.daySummary.percentInfo{mm,day};
-%                     a.reversalPrefsEarly(m,n) = a.daySummary.percentInfoEarly{mm,day};
-%                     a.reversalPrefsLate(m,n) = a.daySummary.percentInfoEarly{mm,day};
-%                 end
-%             end
-%             if day > 0
-%     %             if isnan(a.daySummary.rxnSpeedIdx{m,a.reversalDays(m,n)})
-%     %                 a.reversalRxn(m,n) = a.daySummary.rxnSpeedIdx{m,a.reversalDays(m,n)-1};
-%     %             else
-%                     a.reversalRxn(m,n) = a.daySummary.rxnSpeedIdx{mm,day};
-%                     a.reversalRxnInfo(m,n) = a.daySummary.rxnInfoForced{mm,day};
-%                     a.reversalRxnRand(m,n) = a.daySummary.rxnRandForced{mm,day};
-%                     a.reversalRxnInfoChoice(m,n) = a.daySummary.rxnInfoChoice{mm,day};
-%                     a.reversalRxnRandChoice(m,n) = a.daySummary.rxnRandChoice{mm,day};                    
-%     %             end
-%     %             if isnan(a.daySummary.earlyLickIdx{m,a.reversalDays(m,n)})
-%     %                 a.reversalLicks(m,n) = a.daySummary.earlyLickIdx{m,a.reversalDays(m,n)-1};
-%     %             else
-%                     a.reversalLicks(m,n) = a.daySummary.earlyLickIdx{mm,day};
-%                     a.reversalInfoEarlyLicks(m,n) = a.daySummary.infoLicksEarly{mm,day};
-%                     a.reversalRandEarlyLicks(m,n) = a.daySummary.randLicksEarly{mm,day};
-%                     a.reversalInfoBigEarlyLicks(m,n) = a.daySummary.infoBigLicksEarly{mm,day};
-%                     a.reversalInfoSmallEarlyLicks(m,n) = a.daySummary.infoSmallLicksEarly{mm,day};
-%                     a.reversalRandCEarlyLicks(m,n) = a.daySummary.randCLicksEarly{mm,day};
-%                     a.reversalRandDEarlyLicks(m,n) = a.daySummary.randDLicksEarly{mm,day};
-%                     a.reversalInfoBigLicks(m,n) = a.daySummary.infoBigLicks{mm,day};
-%                     a.reversalInfoSmallLicks(m,n) = a.daySummary.infoSmallLicks{mm,day};
-%                     a.reversalRandCLicks(m,n) = a.daySummary.randCLicks{mm,day};
-%                     a.reversalRandDLicks(m,n) = a.daySummary.randDLicks{mm,day};
-%     %             end
-%     %             a.reversalRewardRateIdx(m,n) = (a.daySummary.rewardRateInfoForced{m,a.reversalDays(m,n)}-a.daySummary.rewardRateRandForced{m,a.reversalDays(m,n)})/(a.daySummary.rewardRateInfoForced{m,a.reversalDays(m,n)}+a.daySummary.rewardRateRandForced{m,a.reversalDays(m,n)});
-%                   if n==2
-%                     a.reversalRewardRateIdx(m,n) = (a.daySummary.rewardRateRandForced{mm,day}-a.daySummary.rewardRateInfoForced{mm,day});
-%                     a.reversalRewardRateInfo(m,n) = a.daySummary.rewardRateRand{mm,day};
-%                     a.reversalRewardRateRand(m,n) = a.daySummary.rewardRateInfo{mm,day};
-%                   else
-%                     a.reversalRewardRateIdx(m,n) = (a.daySummary.rewardRateInfoForced{mm,day}-a.daySummary.rewardRateRandForced{mm,day});   
-%                     a.reversalRewardRateInfo(m,n) = a.daySummary.rewardRateInfo{mm,day};
-%                     a.reversalRewardRateRand(m,n) = a.daySummary.rewardRateRand{mm,day};
-%                   end
-%             end
-%         end
-%     end
-% end
-% 
-%     %%
-% if ~isempty(a.reverseMice)    
-% %     if  ~isnan(sum(a.reversalPrefs(:,2)))
-%     
-%     a.meanReversalMultiPrefs = nanmean(a.reversalMultiPrefs);
-%     a.SEMReversalMultiPrefs = sem(a.reversalMultiPrefs);
-%     
-% %     a.meanReversalMultiPrefs = nanmean(a.reversalMultiPrefs(a.reversalMultiPrefs(:,1)>0.5,:));
-% %     a.SEMReversalMultiPrefs = sem(a.reversalMultiPrefs(a.reversalMultiPrefs(:,1)>0.5,:));
-% 
-%     a.reversalPrefs_stats = a.reversalPrefs*100;
-%     a.reversal1P = signrank(a.reversalPrefs_stats(:,1),a.reversalPrefs_stats(:,2));
-%     if ~isnan(a.reversalPrefs(:,3))
-%     a.reversal2P = signrank(a.reversalPrefs_stats(:,2),a.reversalPrefs_stats(:,3));
-%     a.reversalP = signrank(a.reversalPrefs_stats(:,1),a.reversalPrefs_stats(:,3));
-%     end
-% 
-%     a.reversalRxnP(1,1) = signrank(a.reversalRxn(:,1),a.reversalRxn(:,2));
-%     if ~isnan(a.reversalPrefs(:,3))
-%     a.reversalRxnP(1,2) = signrank(a.reversalRxn(:,2),a.reversalRxn(:,3));
-%     a.reversalRxnP(1,3) = signrank(a.reversalRxn(:,1),a.reversalRxn(:,3));
-%     end
-% 
-%     a.reversalLicksP(1,1) = signrank(a.reversalLicks(:,1),a.reversalLicks(:,2));
-%     if ~isnan(a.reversalPrefs(:,3))
-%     a.reversalLicksP(1,2) = signrank(a.reversalLicks(:,2),a.reversalLicks(:,3));
-%     a.reversalLicksP(1,3) = signrank(a.reversalLicks(:,1),a.reversalLicks(:,3));
-%     end
-% 
-%     a.reversalRewardRateP(1,1) = signrank(a.reversalRewardRateIdx(:,1),a.reversalRewardRateIdx(:,2));
-%     if ~isnan(a.reversalPrefs(:,3))
-%     a.reversalRewardRateP(1,2) = signrank(a.reversalRewardRateIdx(:,2),a.reversalRewardRateIdx(:,3));
-%     a.reversalRewardRateP(1,3) = signrank(a.reversalRewardRateIdx(:,1),a.reversalRewardRateIdx(:,3));
-%     end
-% 
-%     if ~isnan(a.reversalPrefs(:,3))
-%     for p =1:3
-%         a.reversalPVals(1,p) = signrank(a.reversalPrefs_stats(:,p)-50);
-%         a.reversalRxnPVals(1,p) = signrank(a.reversalRxn(:,p));
-% %         a.reversalLicksPVals(1,p) = signrank(a.reversalLicks(:,p));
-%         a.reversalRewardRatePVals(1,p) = signrank(a.reversalRewardRateIdx(:,p));
-%     end
-%     end
-%     a.reversalRxnInfoRandP(1,1) = signrank(a.reversalRxnInfo(:,1),a.reversalRxnRand(:,1));
-%     a.reversalRewardRateInfoRandP(1,1) = signrank(a.reversalRewardRateInfo(:,1),a.reversalRewardRateRand(:,1));
-% %     end
-% end
-% 
-% %% LAST N TRIALS BEFORE AND AFTER FIRST REVERSE
-% 
-% trialsToCount = 100;
-% 
-% if ~isempty(a.reverseMice)
-%     for m=1:a.mouseCt  
-%         ok1 = a.mice(:,m) == 1 & a.trialType == 2 & a.reverse == 1;
-%         ok1Idx = find(ok1);
-%         [~,sort1idx] = sort(a.mouseDay(ok1==1));
-%         ok1sorted = ok1Idx(sort1idx);    
-%         okInfoPreRevIdx = find(ok1sorted,trialsToCount,'last');
-%         okInfoPreRev = ok1sorted(okInfoPreRevIdx);
-%         ok2 = a.mice(:,m) == 1 & a.trialType == 2 & a.reverse == -1;
-%         ok2Idx = find(ok2);
-%         [~,sort2idx] = sort(a.mouseDay(ok2==1));
-%         ok2sorted = ok2Idx(sort2idx);    
-%         okInfoPostRevIdx = find(ok2sorted,trialsToCount,'last');
-%         okInfoPostRev = ok2sorted(okInfoPostRevIdx);        
-%         okInfo=sort([okInfoPreRev; okInfoPostRev]);
-%         
-%         ok3 = a.mice(:,m) == 1 & a.trialType == 3 & a.reverse == 1;
-%         ok3Idx = find(ok3);
-%         [~,sort3idx] = sort(a.mouseDay(ok3==1));
-%         ok3sorted = ok3Idx(sort3idx);    
-%         okRandPreRevIdx = find(ok3sorted,trialsToCount,'last');
-%         okRandPreRev = ok3sorted(okRandPreRevIdx);
-%         ok4 = a.mice(:,m) == 1 & a.trialType == 3 & a.reverse == -1;
-%         ok4Idx = find(ok4);
-%         [~,sort4idx] = sort(a.mouseDay(ok4==1));
-%         ok4sorted = ok4Idx(sort4idx);    
-%         okRandPostRevIdx = find(ok4sorted,trialsToCount,'last');
-%         okRandPostRev = ok4sorted(okRandPostRevIdx);        
-%         okRand=sort([okRandPreRev; okRandPostRev]);
-%         
-%         okInfoCorr=a.correct(okInfo);
-%         okRandCorr=a.correct(okRand);
-%         
-%         a.percentCorrRev(m,1) = mean(a.correct(okInfo));
-%         a.percentCorrRev(m,2) = mean(a.correct(okRand));
-%         a.rewardRateRevCorr(m,1) = sum(a.reward(okInfo(okInfoCorr)),'omitnan') / (sum(a.trialLengthCenterEntry(okInfo(okInfoCorr)),'omitnan')/60);
-%         a.rewardRateRevCorr(m,2) = sum(a.reward(okRand(okRandCorr)),'omitnan') / (sum(a.trialLengthCenterEntry(okInfo(okInfoCorr)),'omitnan')/60);
-%         a.rewardRateRev(m,1) = sum(a.reward(okInfo),'omitnan') / (sum(a.trialLengthCenterEntry(okInfo),'omitnan')/60);
-%         a.rewardRateRev(m,2) = sum(a.reward(okRand),'omitnan') / (sum(a.trialLengthCenterEntry(okInfo),'omitnan')/60);  
-%         a.rxnRev(m,1) = mean(a.rxn(okInfo),'omitnan');
-%         a.rxnRev(m,2) = mean(a.rxn(okRand),'omitnan');
-%         
-%     end
-% end
-% 
-% %% ERRORS AND REWARD RATE DURING TRAINING
-% 
-% earlyTrain = a.trialTypes==4 & a.rewardDelay==10 & a.odorTime==0;
-% 
-% for m=1:a.mouseCt
-%     ok = a.mice(:,m) == 1;
-%    a.percentCorrTrain(m,1) = mean(a.correct(ok & a.training & a.trialType==2)); 
-%    a.percentCorrTrain(m,2) = mean(a.correct(ok & a.training & a.trialType==3));
-%    a.trainingErrorsInfo(m,1) = sum(ok & a.training & a.trialType==2 & (a.errorTypes==1|a.errorTypes==4))/sum(ok & a.training & a.trialType==2);
-%    a.trainingErrorsInfo(m,2) = sum(ok & a.training & a.trialType==2 & a.errorTypes==2)/sum(ok & a.training & a.trialType==2);
-%    a.trainingErrorsInfo(m,3) = sum(ok & a.training & a.trialType==2 & a.errorTypes==3)/sum(ok & a.training & a.trialType==2);
-%    a.trainingErrorsRand(m,1) = sum(ok & a.training & a.trialType==3 & (a.errorTypes==1|a.errorTypes==4))/sum(ok & a.training & a.trialType==3);
-%    a.trainingErrorsRand(m,2) = sum(ok & a.training & a.trialType==3 & a.errorTypes==2)/sum(ok & a.training & a.trialType==3);
-%    a.trainingErrorsRand(m,3) = sum(ok & a.training & a.trialType==3 & a.errorTypes==3)/sum(ok & a.training & a.trialType==3);
-%    a.rewardRateTrain(m,1) = sum(a.reward(ok & a.training&a.trialType==2),'omitnan') / (sum(a.trialLengthCenterEntry(ok & a.training & a.trialType==2),'omitnan')/60);
-%    a.rewardRateTrain(m,2) = sum(a.reward(ok & a.training&a.trialType==3),'omitnan') / (sum(a.trialLengthCenterEntry(ok & a.training & a.trialType==3),'omitnan')/60);    
-%    a.rewardRateTrainCorr(m,1) = sum(a.reward(ok & a.training& a.trialType==2 & a.correct==1),'omitnan') / (sum(a.trialLengthCenterEntry(ok & a.training & a.trialType==2 & a.correct==1),'omitnan')/60);
-%    a.rewardRateTrainCorr(m,2) = sum(a.reward(ok & a.training& a.trialType==3 & a.correct==1),'omitnan') / (sum(a.trialLengthCenterEntry(ok & a.training & a.trialType==3 & a.correct==1),'omitnan')/60);    
-%    a.rewardRateTrainEarly(m,1) = sum(a.reward(ok & earlyTrain & a.trialType==2),'omitnan') / (sum(a.trialLengthCenterEntry(ok & earlyTrain  & a.trialType==2),'omitnan')/60);
-%    a.rewardRateTrainEarly(m,2) = sum(a.reward(ok & earlyTrain & a.trialType==3),'omitnan') / (sum(a.trialLengthCenterEntry(ok & earlyTrain  & a.trialType==3),'omitnan')/60);    
-% 
-% end
-% 
-% %% INFO vs RAND STATS OVERALL (not by day)
-% 
-% % do these need to be for correct??
-% % CHANGE BACK TO ONLY PREF DAYS!
-% 
-% for m=1:a.mouseCt
-%     ok = a.mice(:,m)==1 & a.trialTypes == 5 & abs(a.reverse)== 1 & a.forcedCorrTrials == 1;
-% %     ok = a.mice(:,m)==1 &  a.forcedCorrTrials == 1;
-%     a.rxnMean(m,1) = nanmean(a.rxn(ok & a.info==1 & a.correct==1));
-%     a.rxnMean(m,2) = nanmean(a.rxn(ok & a.info==0 & a.correct==1));
-%     a.rxnDiff(m,1) = a.rxnMean(m,1) - a.rxnMean(m,2);
-%     for i = 1:numel(a.reverseTypes)
-%        r = a.reverseTypes(i);
-%        a.rxnInfoRev(m,i) = nanmean(a.rxn(ok & a.reverse==r & a.info == 1 & a.correct==1));
-%        a.rxnRandRev(m,i) = nanmean(a.rxn(ok & a.reverse==r & a.info == 0 & a.correct==1));
-%     end
-%     
-%     okAll = a.mice(:,m)==1 & abs(a.reverse)==1;
-% %     okAll = a.mice(:,m)==1 & a.reverse == 0;
-%     a.rewardRate(m,1) = nansum(a.reward(a.info == 1 & okAll == 1)) / (nansum(a.trialLengthCenterEntry(a.info == 1 & okAll == 1))/60);
-%     a.rewardRate(m,2) = nansum(a.reward(a.info == 0 & okAll == 1)) / (nansum(a.trialLengthCenterEntry(a.info == 0 & okAll == 1))/60);
-%     a.rewardDiff(m,1) = a.rewardRate(m,1) - a.rewardRate(m,2);
-%     a.rewardIdx(m,1) = a.rewardRate(m,1)/a.rewardRate(m,2);
-%     
-%     if ismember(m,a.reverseMice)
-%         mm=find(a.reverseMice==m);
-%         okPref = a.mice(:,m)==1 & abs(a.reverse)==1;
-%         okPrefCorr = okPref & a.correct==1;
-%         a.rewardRatePrefDays(mm,1) = nansum(a.reward(a.info == 1 & okPref == 1)) / (nansum(a.trialLengthCenterEntry(a.info == 1 & okPref == 1))/60);
-%         a.rewardRatePrefDays(mm,2) = nansum(a.reward(a.info == 0 & okPref == 1)) / (nansum(a.trialLengthCenterEntry(a.info == 0 & okPref == 1))/60);
-%         a.rewardDiffPrefDays(mm,1) = a.rewardRatePrefDays(mm,1) - a.rewardRatePrefDays(mm,2);
-%         a.rewardIdxPrefDays(mm,1) = a.rewardRatePrefDays(mm,1) / a.rewardRatePrefDays(mm,2);
-%         a.rewardIdxPrefDaysCorr(mm,1) = nansum(a.reward(a.info == 1 & okPrefCorr == 1)) / (nansum(a.trialLengthCenterEntry(a.info == 1 & okPrefCorr == 1))/60);
-%         a.rewardIdxPrefDaysCorr(mm,2) = nansum(a.reward(a.info == 0 & okPrefCorr == 1)) / (nansum(a.trialLengthCenterEntry(a.info == 0 & okPrefCorr == 1))/60);
-%         a.rewardIdxPrefDaysCorr(mm,3) = a.rewardIdxPrefDaysCorr(mm,1)/a.rewardIdxPrefDaysCorr(mm,2);
-%     end
-% 
-% end
 
 %% SAVE
 
-save(fullfile(datapath,'infoSeekData_BPODBEHAVIOR_Df16_analyzed.mat'),'-struct','a','-v7.3');
-% save(fullfile(datapath,'infoSeekData_BPODBEHAVIOR_NoCTHALO_analyzed.mat'),'-struct','a','-v7.3');
-% save(fullfile(datapath,'infoSeekData_BPODBEHAVIOR_Averse_analyzed.mat'),'-struct','a','-v7.3');
-% save(fullfile(datapath,'infoSeekData_JB214BEHAVIOR_Ports_analyzed.mat'),'-struct','a','-v7.3');
-% save(fullfile(datapath,'infoSeekData_ALLBEHAVIOR_analyzed_NEW3.mat'),'-struct','a','-v7.3');
+save(fullfile(datapath,'infoSeekData_ALLBEHAVIOR_analyzed_NEW3.mat'),'-struct','a','-v7.3');

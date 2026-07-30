@@ -2,7 +2,6 @@ clear; close all;
 
 datapath=findInfoseekData();
 
-% summarySettings=load(fullfile(datapath,'BpodInfoseekSummarySettingsWTAll.mat'));
 summarySettings=load(fullfile(datapath,'BpodInfoseekSummarySettingsWaterVal.mat'));
 
 dataset = summarySettings.dataset;
@@ -25,16 +24,6 @@ filesUnique=unique(filesT);
 numFiles = size(filesUnique,1);
 
 f=3;
-
-% load main session table from file!
-
-% load each file and concatenate variables
-% loadVars={'file','mouse','day','trial','correct','info',...
-%     'outcome','trialType','trialTypes','infoSide','reward',...
-%     'rxn','trialLength','trialLengthCenterEntry','odorDelay','rewardDelay',...
-%     'rewardParams','trialSettings.Interval','trialSettings.GracePeriod','trialSettings.OdorTime',...
-%     'odorAtrials','odorBtrials','odorCtrials','odorDtrials','odor2On','anticipatoryInfoLicks','anticipatoryRandLicks',...
-%     'earlyInfoLicks','earlyRandLicks','waterInfoLicks','waterRandLicks'};
 
 loadVars={'mouse','day','trial','correct','info','big',...
     'outcome','trialType','trialTypes','infoSide','bigSide','reward',...

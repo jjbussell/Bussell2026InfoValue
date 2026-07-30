@@ -11,15 +11,8 @@ a1.sessions2.mouse={a1.sessions(:).mouse}';
 a1.sessions=a1.sessions2;
 
 
-% DELETE SESSIONS2!!!!!
+% DELETE SESSIONS2
 a1=rmfield(a1,'sessions2');
-% 
-% a1.earlyInfoLicks = a1.earlyInfoLicks(a1.correct==1);
-% a1.anticipatoryInfoLicks = a1.anticipatoryInfoLicks(a1.correct==1);
-% a1.waterInfoLicks = a1.waterInfoLicks(a1.correct==1);
-% a1.earlyRandLicks = a1.earlyRandLicks(a1.correct==1);
-% a1.anticipatoryRandLicks = a1.anticipatoryRandLicks(a1.correct==1);
-% a1.waterRandLicks = a1.waterRandLicks(a1.correct==1);
 
 a1.odorAtrials = a1.odorAtrials(a1.correct==1);
 a1.odorBtrials = a1.odorBtrials(a1.correct==1);
@@ -33,19 +26,12 @@ a1=rmfield(a1,'StartTrial');
 a1.odor2LeavingTime = a1.odor2LeavingTime-a1.odor2On;
 a1.odor2LeavingTime(:,[2 3]) = [a1.file a1.trial];
 
-
-% 
-% %%
-% 
 a=a1;
 
 
 save(fullfile(datapath,'infoSeekData_ALLBEHAVIOR_WaterVal2.mat'),'-struct','a','-v7.3');
 
 clear a1;
-% 
-% 
-% % a=load('infoSeekData_ALLBEHAVIOR_WaterVal.mat');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,39 +90,7 @@ a.infoSmallCorrect = a.infoSmall(a.correct == 1);
 
 a.rewardCorr=a.reward(a.correct==1); %these are the same!
 
- % ERRORS
  
-%  a.errorLabels = {'Correct','No Choice','Incorrect Choice','Not Present','Leaving Timeout'};
-
-% doesn't include NP (NP info small is not an error)-->NOW IT DOES!
-% NP info small is outcome 5 and 14
-% how to check if timeout or not?!?
-
-% a.infoCorrCodes = [11 13 14];
-% a.infoIncorrCodes = [10 12 15];
-% a.randCorrCodes = [17 19];
-% a.randIncorrCodes = [16 18 20 21];
-% a.choiceCorrCodes = [2 4 5 6 8];
-% a.choiceIncorrCodes = [1 3 7 9];    
-% 
-% a.infoForcedCorr = ismember(a.outcome,a.infoCorrCodes);
-% a.infoForcedIncorr = ismember(a.outcome,a.infoIncorrCodes);
-% a.randForcedCorr = ismember(a.outcome,a.randCorrCodes);
-% a.randForcedIncorr = ismember(a.outcome,a.randIncorrCodes);
-% a.choiceCorr = ismember(a.outcome,a.choiceCorrCodes);
-% a.choiceIncorr = ismember(a.outcome,a.choiceIncorrCodes);
-% a.infoChoiceCorr = ismember(a.outcome,[2 4 5]);
-% a.randChoiceCorr = ismember(a.outcome,[6 7]);
-% 
-% a.infoForcedCorrect = a.infoForcedCorr(a.correct==1);
-% a.infoChoiceCorrect = a.infoChoiceCorr(a.correct==1);
-% a.randForcedCorrect = a.randForcedCorr(a.correct==1);
-% a.randChoiceCorrect = a.randChoiceCorr(a.correct==1);
-% 
-% a.choiceCorrTypeNames = {'InfoForced','RandForced','InfoChoice',...
-%     'RandChoice'};
-% a.choiceTypeCtsCorr = [sum(a.infoForcedCorr) sum(a.randForcedCorr) sum(a.infoChoiceCorr) sum(a.randChoiceCorr)];
-% 
 %% NOT PRESENT
 % 
 a.infoBigNP = a.outcome==7;
@@ -147,19 +101,7 @@ a.bigNP = a.outcome==19;
 a.smallNP = a.outcome==3;
 a.notPresent = [sum(a.infoBigNP)/sum(a.infoBig) sum(a.infoSmallNP)/sum(a.infoSmall) sum(a.randBigNP)/sum(a.randBig) sum(a.randSmallNP)/sum(a.randSmall) sum(a.bigNP)/sum(a.bigWater) sum(a.smallNP)/sum(a.smallWater)];
 
-% % a.notPresent = ismember(a.outcome,[3 5 7 9 12 14 18 20]);
-% 
-%% ERRORTYPES
-% a.errorTypes = NaN(numel(a.file),1);
-% 
-% a.errorTypes(ismember(a.outcome,[2,4,6,8,11,13,17,19]))= 1; % correct
-% a.errorTypes(ismember(a.outcome,[1,10,16]))= 2; % no choice
-% a.errorTypes(ismember(a.outcome,[15,21]))= 3; % incorrect
-% a.errorTypes(ismember(a.outcome,[3,5,7,9,12,14,18,20]))= 4; % not present
-% %     a.errorTypes(a.timeout==1)= 5; % timeout
-
-
-% REACTION SPEED
+%% REACTION SPEED
 a.rxnSpeed = 1./a.rxn;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -286,25 +228,12 @@ a.reverseCorr=a.reverse(a.correct==1);
 
 a.choiceMice = find(a.choiceMice);
 
-% dayDates = datetime(unique(a.day),'InputFormat','yyyyMMdd');
-% toDay = string(datetime(max(dayDates),'Format','yyyyMMdd'));
-% a.today = a.day == toDay;
-% a.currentMiceList = unique(a.mouse(a.today==1));
-% a.currentMice = find(ismember(a.mouseList,a.currentMiceList));
 
 a.choiceMiceList = a.mouseList(a.choiceMice);
 a.choiceMouseCt = numel(a.choiceMice);
 
 a.reverseMice = find(a.reverseMice);
 a.reverseMiceList  = a.mouseList(a.reverseMice);
-
-% a.timeoutMice=[];
-
-% SILENCING MICE
-% 1 = halo, 2 = YFP
-% a.halo = zeros(a.mouseCt,1);
-% a.halo([1 2 6 7 10 11 12])=1;
-% a.halo([3 4 5 8 9])=2;
 
 
 %% DAYS AROUND FIRST REVERSAL
@@ -641,5 +570,3 @@ a.reversalRewardRateCorr=[a.reversalRewardRateCorrInfo(:,1) a.reversalRewardRate
 
 %% SAVE
 save(fullfile(datapath,'infoSeekData_BPODBEHAVIOR_WaterVal_analyzed2.mat'),'-struct','a','-v7.3');
-% save(fullfile(datapath,'infoSeekData_JB214BEHAVIOR_Ports_analyzed.mat'),'-struct','a','-v7.3');
-% save(fullfile(datapath,'infoSeekData_ALLBEHAVIOR_analyzed_NEW3.mat'),'-struct','a','-v7.3');
