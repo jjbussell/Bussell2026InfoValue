@@ -1,3 +1,12 @@
+%% CNMFE_pipe
+
+% Bussell imaging pipeline implementation of CNMFE 1-photon calcium cell
+% extration
+% uses Pengcheng Zhou's CNMFE package (https://github.com/zhoupc/cnmf_e,
+% Zhou, P., Resendez, S.L., Rodriguez-Romaguera, J., Jimenez, J.C, Neufeld, S.Q., Giovannucci, A., Friedrich, J., Pnevmatikakis, E.A., Stuber, Garret D , Stuber, G.D., Hen, R., Kheirbek, M.A., Sabatini, B.L., Kass, R.E., Paninski, L. (2018). Efficient and accurate extraction of in vivo calcium signals from microendoscopic video data. eLife, pp.e28728.
+% https://elifesciences.org/articles/28728
+% adapted from demo_large_data_1p.m
+
 %% clear the workspace and select data 
 clear; clc; close all;
 
@@ -8,14 +17,15 @@ if isdir('F:\1PMC')
 else
     MCdir = 'D:\1PMC';
 end
-
 % MCdir = uigetdir('','Choose data directory');
 
 datadir = findInfoseekData();
 
-files = dir(fullfile(MCdir,'JB*PP4X_MC_MCmid.tiff'));
-% files = dir(fullfile(MCdir,'JB*PP4X_MC.tiff'));
-% files = dir(fullfile(MCdir,'JB999_20230501_PP4X_MC_51083-end.tiff'));
+% TOGGLE HERE TO USE EITHER THE MATCHED-TO_BASE-DAY FILES
+% OR FILES ONLY MOTION-CORRECTED WITHIN THEMSELVES
+files = dir(fullfile(MCdir,'JB*PP4X_MC_MCmid.tiff')); % majority of files
+% files = dir(fullfile(MCdir,'JB*PP4X_MC.tiff')); % for base days
+
 
 for f=1:numel(files)
 %% choose data 
@@ -175,6 +185,7 @@ end
 neuron_init_res = neuron.copy();
 
 %% udpate spatial&temporal components, delete false positives and merge neurons
+
 % update spatial
 if update_sn
     neuron.update_spatial_parallel(use_parallel, true);

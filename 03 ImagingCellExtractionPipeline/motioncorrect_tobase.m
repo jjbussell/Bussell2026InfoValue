@@ -1,7 +1,10 @@
-clear;
+%% Motion correcting to "base day"
 
-% need to set this within shell, if not parse files to give as input to
-% motioncorrect
+% uses normcorre algorithm to motion correct each frame of current imaging
+% session to the template of a "base" or anchor day to improve
+% registration of ROIs across sessions
+
+clear;
 
 if isdir('F:\1PMC')
     MCdir = 'F:\1PMC';
@@ -10,15 +13,15 @@ else
 end
 
 datadir = findInfoseekData();
-% dataset='ImagingJB424'; %'ImagingJB'
-% dataset = 'NoCT';
-% dataset = 'Df16';
+
+% designated the data set/experiment to load the sessions table that labels
+% the base day
+dataset='ImagingJB424'; %'ImagingJB'
 % dataset = 'JB509';
-dataset = 'WaterValEarly';
+% dataset = 'WaterValEarly';
 % dataset = 'Stay';
 
 load(fullfile(datadir,['BpodInfoseekSessions_',dataset,'.mat']));
-% session.anchor(find(strcmp(session.mouse,'JB506')&strcmp(session.date,'20250205')))=1;
 
 files = dir(fullfile(MCdir,'JB*PP4X_MC.tiff'));
 for f=1:numel(files)
@@ -32,7 +35,7 @@ for f=1:numel(files)
     basefile=dir(basepattern);
     if ~isempty(basefile) % only run if have basefile
     load(fullfile(MCdir,basefile.name));
-    name=fullfile(MCdir,files(f).name)
+    name=fullfile(MCdir,files(f).name);
     
     Y = bigread2(name);
     Y = single(Y);
@@ -58,6 +61,8 @@ for f=1:numel(files)
 
     options_r = NoRMCorreSetParms('d1',d1,'d2',d2,'bin_width',500,'init_batch',1000,'max_shift',10,'iter',2,'boundary','zero','correct_bidir',false);
 
+    % can try non-rigid motion correction if field of view has changed
+    % across sessions
     options_nr = NoRMCorreSetParms('d1',d1,'d2',d2,'bin_width',2000, ...
         'grid_size',[32,32],'mot_uf',4,'correct_bidir',false,'max_dev',[8,8], ...
         'overlap_pre',24,'overlap_post',24,'max_shift',40,'use_parallel',true,'upd_template',false,'boundary','zero');    
@@ -66,6 +71,7 @@ for f=1:numel(files)
 
     [~,shifts2,template2] = normcorre_batch(Yf,options_r,template1);  
     
+    % if using non-rigid normcorre
 %     [~,shifts2,template2] = normcorre_batch(Yf,options_nr,template1);  
 
     clear Yf;

@@ -1,15 +1,18 @@
+% MOTION CORRECTION
+% motion correction within a given session
+% using the normcorre algorithm on video filtered to extract stationary
+% landmarks
+
 clear all;
 
-% need to set this within shell, if not parse files to give as input to
-% motioncorrect
-
-% basedir = 'D:\1PMC';
+% Checks for the 1PMC directory with motion-corrected imaging files
 if isdir('F:\1PMC')
     basedir = 'F:\1PMC';
 else
     basedir = 'D:\1PMC';
 end
 
+% tiff files may have been automatically split due to size
 basefiles = dir(fullfile(basedir,'JB*PP4X.tiff'));
 suppfiles = dir(fullfile(basedir,'JB*PP4X*00*.tiff'));
 files=cat(1,basefiles,suppfiles);
@@ -51,8 +54,7 @@ for d=1:numel(days)
     s2=6; %15 %8 %12 8 10
     th=4; % 12 %4 %6 4 10
     
-    days{d}
-    disp('filtering')
+    days{d};
     
     for t = 1:T
         Ys = imgaussfilt(-Ycat(:,:,t),s1) - imgaussfilt(-Ycat(:,:,t),s2); %difference of gaussians
@@ -85,7 +87,7 @@ for d=1:numel(days)
     %% Save motion corrected vid, template, shifts, concat files  
     disp('saving')
     fname = [days{d} '_PP4X_MC'];
-    tiff_name = fullfile(basedir,[fname '.tiff'])
+    tiff_name = fullfile(basedir,[fname '.tiff']);
     fTIF = Fast_BigTiff_Write(tiff_name,1,0);
     for t = 1:T
        fTIF.WriteIMG(uint16(flipud(rot90(Mr(:,:,t))))); 
