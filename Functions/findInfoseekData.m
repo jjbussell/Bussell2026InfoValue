@@ -1,4 +1,7 @@
 function datapath=findInfoseekData()
+    % Locate the Bpod Infoseek data folder by checking a short list of
+    % known machine-specific paths; if none exist, fall back to an
+    % interactive folder picker.
     desktoppath = 'D:\Bussell Dropbox\Jennifer Bussell\BpodInfoseek\Data';
     laptoppath = 'C:\Users\jbuss\Dropbox\BpodInfoseek\Data';
     desktop2path = 'D:\Bussell Dropbox\Bussell Lab\BpodInfoseek\Data';

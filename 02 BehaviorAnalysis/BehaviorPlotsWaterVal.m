@@ -1,3 +1,5 @@
+%% BehaviorPlotsWaterVal
+
 close all;
 
 %% SAVEPATH
@@ -89,12 +91,6 @@ idx2rev=find(revFlag==2);
 mice1rev=a.mouseList(idx1rev);
 mice2rev=a.mouseList(idx2rev);
 
-
-% silencing=sum(a.halo>0);
-% hIdx=find(a.halo==1);
-% yIdx=find(a.halo==2);
-% hMice=a.mouseList(hIdx);
-% yMice=a.mouseList(yIdx);
 
 %%
 win = 0.050; % bins in ms

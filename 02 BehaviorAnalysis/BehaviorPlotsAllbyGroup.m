@@ -1,3 +1,5 @@
+%% BehaviorPlotsAllbyGroup
+
 close all;
 
 %% SAVEPATH
@@ -16,37 +18,6 @@ orange = [251 139 6] ./ 255;
 cornflower = [100 149 237] ./ 255;
 grey = [.8 .8 .8];
 
-CCfinal = [0.2,0.2,0.2; %choice no choice
-    0.474509803921569,0.125490196078431,0.768627450980392; %choice info big
-    171/255,130/255,1; % choice info big NP
-    0.9490, 0.8, 1.0; %choiceinfosmall
-    238/255,224/255,229/255; %choiceinfoNPsmall    
-    0.984313725490196,0.545098039215686,0.0235294117647059; %choice rand big
-    245/255,222/255,179/255; % choice rand big NP
-    1, 0.8, 0.0; %choice rand small
-    244/255, 164/255, 96/255; %choice rand small NP
-    0.6,0.6,0.6; %info no choice
-    0,1,0; %info big
-    152/255,251/255,152/255;% info big NP
-    1,0,1; %infosmall
-    1,192/255,203/255; %info small not present
-    0.0,0.0,0.0; %infoincorrect
-    0.2,0.2,0.2;% rand no choice
-    0,0,1; %rand big
-    135/255,206/255,1; % rand big NP
-    0,1,1; %rand small
-    187/255,1,1; %rand small NP
-    0.0,0.0,0.0]; %rand incorrect
-
-CCNP = [0.474509803921569,0.125490196078431,0.768627450980392; %choice info big
-    0.9490, 0.8, 1.0; %choiceinfosmall  
-    0.984313725490196,0.545098039215686,0.0235294117647059; %choice rand big
-    1, 0.8, 0.0; %choice rand small
-    0,1,0; %info big
-    1,0,1; %infosmall
-    0,0,1; %rand big
-    0,1,1]; %rand small
-
 CCtype = [grey; purple; orange;...
     0,1,0; %info big
     1,0,1; %infosmall
@@ -56,59 +27,42 @@ CCtype = [grey; purple; orange;...
 a.typeLabels = {'Choice','Info','No Info','Info Water',...
     'Info No Water','No Info Water','No Info No Water'};
 
-a.choiceLabels = {'ChoiceInfoBig','ChoiceInfoSmall','ChoiceRandBig',...
-    'ChoiceRandSmall','InfoBig','InfoSmall','RandBig','RandSmall'};
-
-a.outcomeLabels = {'ChoiceNoChoice','ChoiceInfoBig','ChoiceInfoBigNP',...
-    'ChoiceInfoSmall','ChoiceInfoSmallNP','ChoiceRandBig','ChoiceRandBigNP',...
-    'ChoiceRandSmall','ChoiceRandSmallNP','InfoNoChoice','InfoBig',...
-    'InfoBigNP','InfoSmall','InfoSmallNP','InfoIncorrect','RandNoChoice',...
-    'RandBig','RandBigNP','RandSmall','RandSmallNP',...
-    'RandIncorrect'};
-
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% GROUPS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% a.mouseNums = arrayfun(@(X)  find(a.mice(X,:),1,'last'), 1:size(a.mice,1))';
-
 clear flag labels label;
 
+% three mice were excluded for failing to learn the task
 a.goodMice=ones(size(a.mouseList));
 a.goodMice([27 34 35])=2;
-
 flag='goodMice';
 labels={'GoodMice','BadMice'};
 label={'GoodBad'};
 
-% flag='imageMice';
-% labels={'WTMice','ImagedMice'};
-% label={'Imaged'};
-
+% to plot by sex
 % a.sex=ones(size(a.mouseList));
 % a.sex([20 24 25 27 29 33 34 35 36 37])=2;
 % flag='sex';
 % labels={'Male','Female'};
 % label={'Sex'};
-% 
+
+% to plot by mice trained with lick sensors
 % a.origMice=ones(size(a.mouseList));
 % a.origMice(15:end)=2;
 % flag='origMice';
 % labels={'Original','Later'};
 % label={'Orig'};
 
-% a.leavingMice=ones(size(unique(a.mouse)));
-% % a.leavingMice([1 2 3 11 12])=2;
-% a.leavingMice([1 2 3 9 10])=2;
-% % a.leavingMice([1 2 3])=2;
-% % a.leavingMice([7 8])=3;
-% flag='leavingMice';
-% labels={'Tones','Always Water'};
-% label={'LeavingMice'};
+% to plot mice trained in the task with an outcome-revealing tone on all
+% trials (label==1)
+% a.tonesTask=ones(size(unique(a.mouse)));
+% a.tonesTask([1 2 3 9 10])=2;
+% flag='tonesTask';
+% labels={'Tones','OtherTestMice'};
+% label={'TonesTask'};
 
 active=sum(a.(flag)>0);
 idx1=find(a.(flag)==1);
@@ -126,78 +80,12 @@ idx2rev=find(revFlag==2);
 mice1rev=a.mouseList(idx1rev);
 mice2rev=a.mouseList(idx2rev);
 
-%%
+%% Time window
+
 win = 0.050; % bins in ms
 bins = [-1:win:15];
 a.bins=bins;
 a.win = win;
-
-%% PLOT POPULATION MEAN CHOICES AROUND REVERSALS
-
-for d=1:6
-a.reversalMultiPrefsP(1,d) = signrank(a.reversalMultiPrefs(idx1rev,d)*100-50);
-a.reversalMultiPrefsP(2,d) = signrank(a.reversalMultiPrefs(idx2rev,d)*100-50);
-end
-
-fig = figure();
-
-fig = gcf;
-fig.PaperUnits = 'inches';
-fig.PaperPosition = [0.5 0.5 10 7];
-set(fig,'renderer','painters');
-set(fig,'PaperOrientation','landscape');
-
-ax = nsubplot(1,2,1,1);
-ax.FontSize = 8;
-ax.YTick = [0 0.25 0.50 0.75 1];
-ax.YLim = [0 1];
-ax.XLim = [0.5 6.5];
-ax.XTick = [1:6];
-plot([1:3], mean(a.reversalMultiPrefs(idx1rev,1:3),1,'omitnan'),'Color','k','LineWidth',3,'Marker','o','MarkerFaceColor','k','MarkerSize',8);
-for n=1:3
-   errorbar(n,mean(a.reversalMultiPrefs(idx1rev,n),1,'omitnan'),sem(a.reversalMultiPrefs(idx1rev,n)),'Color','k','LineWidth',2,'CapSize',25);
-   text(n, mean(a.reversalMultiPrefs(idx1rev,n),1,'omitnan') + 0.1, ['p=', num2str(a.reversalMultiPrefsP(1,n))], 'HorizontalAlignment', 'center');
-end
-plot([4:6], mean(a.reversalMultiPrefs(idx1rev,4:6),1,'omitnan'),'Color','k','LineWidth',3,'Marker','o','MarkerFaceColor','k','MarkerSize',8);
-for n=4:6
-   errorbar(n,mean(a.reversalMultiPrefs(idx1rev,n),1,'omitnan'),sem(a.reversalMultiPrefs(idx1rev,n)),'Color','k','LineWidth',2,'CapSize',25);
-   text(n, mean(a.reversalMultiPrefs(idx1rev,n),1,'omitnan') + 0.1, ['p=', num2str(a.reversalMultiPrefsP(1,n))], 'HorizontalAlignment', 'center');
-end    
-plot([3.5 3.5],[-10000000 1000000],'color','r','linewidth',2,'linestyle','--','yliminclude','off','xliminclude','off');
-reverseLabels = {'-3','-2','-1','1','2','3'};
-set(gca,'XTickLabel',reverseLabels);
-ylabel({'% choice of', 'info side'});
-xlabel('Day relative to side reversal');
-title(label1)
-hold off;
-axis square;
-
-ax = nsubplot(1,2,1,2);
-ax.FontSize = 8;
-ax.YTick = [0 0.25 0.50 0.75 1];
-ax.YLim = [0 1];
-ax.XLim = [0.5 6.5];
-ax.XTick = [1:6];
-plot([1:3], mean(a.reversalMultiPrefs(idx2rev,1:3),1,'omitnan'),'Color','k','LineWidth',3,'Marker','o','MarkerFaceColor','k','MarkerSize',8);
-for n=1:3
-   errorbar(n,mean(a.reversalMultiPrefs(idx2rev,n),1,'omitnan'),sem(a.reversalMultiPrefs(idx2rev,n)),'Color','k','LineWidth',2,'CapSize',25);
-   text(n, mean(a.reversalMultiPrefs(idx2rev,n),1,'omitnan') + 0.1, ['p=', num2str(a.reversalMultiPrefsP(2,n))], 'HorizontalAlignment', 'center');
-end
-plot([4:6], mean(a.reversalMultiPrefs(idx2rev,4:6),1,'omitnan'),'Color','k','LineWidth',3,'Marker','o','MarkerFaceColor','k','MarkerSize',8);
-for n=4:6
-   errorbar(n,mean(a.reversalMultiPrefs(idx2rev,n),1,'omitnan'),sem(a.reversalMultiPrefs(idx2rev,n)),'Color','k','LineWidth',2,'CapSize',25);
-   text(n, mean(a.reversalMultiPrefs(idx2rev,n),1,'omitnan') + 0.1, ['p=', num2str(a.reversalMultiPrefsP(2,n))], 'HorizontalAlignment', 'center');
-end    
-plot([3.5 3.5],[-10000000 1000000],'color','r','linewidth',2,'linestyle','--','yliminclude','off','xliminclude','off');
-reverseLabels = {'-3','-2','-1','1','2','3'};
-set(gca,'XTickLabel',reverseLabels);
-ylabel({'% choice of', 'info side'});
-xlabel('Day relative to side reversal');
-title(label2)
-hold off;
-axis square;
-
-saveas(fig,fullfile(pathname,[label{1} '_ReversalMultiChoicesIIS']),'pdf');
 
    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1043,212 +931,7 @@ ylabel('Mean Pre-Outcome Licks');
 title([label1 ' Friedman p = ' num2str(a.preRevLickspval)]);
 hold off;
 
-saveas(fig,fullfile(pathname,[label{1} '_preRevLicks']),'pdf');
-
-%%
-% 
-% fig = figure();
-% fig.PaperUnits = 'inches';
-% fig.PaperPosition = [0.5 0.5 10 7];
-% set(fig,'renderer','painters');
-% set(fig,'PaperOrientation','landscape');
-% 
-% licklabels={'Info Water', 'No Info C','No Info D','Info No Water'};
-% 
-% ax = nsubplot(1,2,1,1);
-% ax.FontSize = 8;
-% xticks([1 3]);
-% xticklabels({'Info','No Info'});
-% ax.XLim = [0.5 3.5];
-% ax.YLim = [0 1.5];
-% hold on;
-% v1=Violin(a.preRevEarlyLicksMean(idx1rev,1),1);
-% v2=Violin(a.preRevEarlyLicksMean(idx1rev,2),2);
-% v1.ViolinColor='b'; 
-% v1.EdgeColor='none'; 
-% v1.BoxColor='none';
-% v1.ScatterPlot.MarkerFaceColor='k';
-% v1.ScatterPlot.MarkerFaceAlpha=1;
-% v1.ShowMean=true;
-% v2.ViolinColor='r'; 
-% v2.EdgeColor='none'; 
-% v2.BoxColor='none';
-% v2.ScatterPlot.MarkerFaceColor='k';
-% v2.ScatterPlot.MarkerFaceAlpha=1;
-% v2.ShowMean=true;
-% ax.XTickLabel={'Info','No Info'};
-% ylabel('Mean Pre-Odor Licks');
-% [h,p]=ttest(a.preRevEarlyLicksMean(idx1rev,1),a.preRevEarlyLicksMean(idx1rev,2));
-% title([label1 ' Pre-reversal p = ' num2str(a.preRevEarlyLicksP1(1,1))])
-% hold off;
-% 
-% ax = nsubplot(1,2,1,2);
-% ax.FontSize = 8;
-% ax.XLim = [0.5 4.5];
-% ax.XTick = [1 2 3 4];
-% %     ax.YLim = [0 1.5];
-% hold on;
-% v1=Violin(a.preRevLicksMean(idx1rev,1),1);
-% v2=Violin(a.preRevLicksMean(idx1rev,2),2);
-% v3=Violin(a.preRevLicksMean(idx1rev,3),3);
-% v4=Violin(a.preRevLicksMean(idx1rev,4),4);
-% v1.ViolinColor='g'; 
-% v1.EdgeColor='none'; 
-% v1.BoxColor='none';
-% v1.ScatterPlot.MarkerFaceColor='k';
-% v1.ScatterPlot.MarkerFaceAlpha=1;
-% v1.ShowMean=true;
-% v2.ViolinColor=cornflower; 
-% v2.EdgeColor='none'; 
-% v2.BoxColor='none';
-% v2.ScatterPlot.MarkerFaceColor='k';
-% v2.ScatterPlot.MarkerFaceAlpha=1;
-% v2.ShowMean=true;
-% v3.ViolinColor=cornflower; 
-% v3.EdgeColor='none'; 
-% v3.BoxColor='none';
-% v3.ScatterPlot.MarkerFaceColor='k';
-% v3.ScatterPlot.MarkerFaceAlpha=1;
-% v3.ShowMean=true;
-% v4.ViolinColor='m'; 
-% v4.EdgeColor='none'; 
-% v4.BoxColor='none';
-% v4.ScatterPlot.MarkerFaceColor='k';
-% v4.ScatterPlot.MarkerFaceAlpha=1;
-% v4.ShowMean=true;   
-% ax.XTickLabel=licklabels;
-% ylabel('Mean Pre-Outcome Licks');
-% title([label1 ' Pre-reversal ANOVA p = ' num2str(a.preRevLicksP1(2,1))])
-% hold off;    
-% 
-% saveas(fig,fullfile(pathname,[label{1} '_preRevLicks']),'pdf');
-
-%% PORT PROBABILITY PRE-REVERSAL (All trials not just 3 days)
-% 
-% figure();
-% fig = gcf;
-% fig.PaperUnits = 'inches';
-% fig.PaperPosition = [0.5 0.5 10 7];
-% set(fig,'renderer','painters');
-% set(fig,'PaperOrientation','landscape');
-% 
-% % ok=abs(a.reverse)==1 & a.trialTypes == 5 & a.correct==1 & ismember(a.mouseNums,idx1);
-% ok=a.reverse==1 & a.trialTypes == 5 & a.correct==1 & ismember(a.mouseNums,idx1);
-% 
-% ax = nsubplot(3,2,1,1);
-% title([label1 ' Probability in port by trial type, pre-reversal choice days']);
-% ax.FontSize = 8;
-% ylabel('CENTER port');
-% plot(bins,mean(a.Port2(a.trialType==1 & ok,:)),'Color',grey,'LineWidth',2);
-% plot(bins,mean(a.Port2(a.trialType==2 & ok,:)),'Color',purple,'LineWidth',2);
-% plot(bins,mean(a.Port2(a.trialType==3 & ok,:)),'Color',orange,'LineWidth',2);    
-% ax.YTick = [0 0.25 0.50 0.75 1];
-% ax.YLim = [-0.1 1.1];
-% plot([0 0],[-1 +1].*10^10,'color','k','yliminclude','off');
-% plot([1.45 1.45],[-1 +1].*10^10,'color','k','yliminclude','off');
-% plot([11.45 11.45],[-1 +1].*10^10,'color','k','yliminclude','off');
-% ax.XLim = [-1 12];
-% %     xlabel('Time relative to go cue (s)');
-% 
-% ax = nsubplot(3,2,2,1);
-% ax.FontSize = 8;
-% ylabel('INFO port');
-% plot(bins,mean(a.infoPort(a.infoBig==1 & ok,:)),'Color','g','LineWidth',2);
-% plot(bins,mean(a.infoPort(a.infoSmall==1 & ok,:)),'Color','m','LineWidth',2); 
-% plot(bins,mean(a.infoPort(a.randBig==1 & ok,:)),'Color','b','LineWidth',2);
-% plot(bins,mean(a.infoPort(a.randSmall==1 & ok,:)),'Color','c','LineWidth',2);
-% plot(bins,mean(a.infoPort(a.trialType==2 & ok,:)),'Color',purple,'LineWidth',2);
-% plot(bins,mean(a.infoPort(a.trialType==3 & ok,:)),'Color',orange,'LineWidth',2);
-% ax.YTick = [0 0.25 0.50 0.75 1];
-% ax.YLim = [-0.1 1.1];
-% plot([0 0],[-1 +1].*10^10,'color','k','yliminclude','off');
-% plot([1.45 1.45],[-1 +1].*10^10,'color','k','yliminclude','off');
-% plot([11.45 11.45],[-1 +1].*10^10,'color','k','yliminclude','off');
-% ax.XLim = [-1 12];
-% %     xlabel('Time relative to go cue (s)');
-% 
-% ax = nsubplot(3,2,3,1);
-% ax.FontSize = 8;
-% ylabel('NO INFO port');
-% plot(bins,mean(a.randPort(a.infoBig==1 & ok,:)),'Color','g','LineWidth',2);
-% plot(bins,mean(a.randPort(a.infoSmall==1 & ok,:)),'Color','m','LineWidth',2); 
-% plot(bins,mean(a.randPort(a.randBig==1 & ok,:)),'Color','b','LineWidth',2);
-% plot(bins,mean(a.randPort(a.randSmall==1 & ok,:)),'Color','c','LineWidth',2);
-% plot(bins,mean(a.randPort(a.trialType==2 & ok,:)),'Color',purple,'LineWidth',2);
-% plot(bins,mean(a.randPort(a.trialType==3 & ok,:)),'Color',orange,'LineWidth',2);
-% ax.YTick = [0 0.25 0.50 0.75 1];
-% ax.YLim = [-0.1 1.1];
-% ax.XLim = [-1 12];
-% plot([0 0],[-1 +1].*10^10,'color','k','yliminclude','off');
-% plot([1.45 1.45],[-1 +1].*10^10,'color','k','yliminclude','off');
-% plot([11.45 11.45],[-1 +1].*10^10,'color','k','yliminclude','off');
-% xlabel('Time relative to go cue (s)');
-% 
-% ok=abs(a.reverse)==1 & a.trialTypes == 5 & a.correct==1 & ismember(a.mouseNums,idx2);
-% 
-% ax = nsubplot(3,2,1,2);
-% title([label2 ' Probability in port by trial type, pre-reverse choice days']);
-% ax.FontSize = 8;
-% ylabel('CENTER port');
-% plot(bins,mean(a.Port2(a.trialType==1 & ok,:)),'Color',grey,'LineWidth',2);
-% plot(bins,mean(a.Port2(a.trialType==2 & ok,:)),'Color',purple,'LineWidth',2);
-% plot(bins,mean(a.Port2(a.trialType==3 & ok,:)),'Color',orange,'LineWidth',2);    
-% ax.YTick = [0 0.25 0.50 0.75 1];
-% ax.YLim = [-0.1 1.1];
-% plot([0 0],[-1 +1].*10^10,'color','k','yliminclude','off');
-% plot([1.45 1.45],[-1 +1].*10^10,'color','k','yliminclude','off');
-% plot([11.45 11.45],[-1 +1].*10^10,'color','k','yliminclude','off');
-% ax.XLim = [-1 12];
-% %     xlabel('Time relative to go cue (s)');
-% 
-% ax = nsubplot(3,2,2,2);
-% ax.FontSize = 8;
-% ylabel('INFO port');
-% plot(bins,mean(a.infoPort(a.infoBig==1 & ok,:)),'Color','g','LineWidth',2);
-% plot(bins,mean(a.infoPort(a.infoSmall==1 & ok,:)),'Color','m','LineWidth',2); 
-% plot(bins,mean(a.infoPort(a.randBig==1 & ok,:)),'Color','b','LineWidth',2);
-% plot(bins,mean(a.infoPort(a.randSmall==1 & ok,:)),'Color','c','LineWidth',2);
-% plot(bins,mean(a.infoPort(a.trialType==2 & ok,:)),'Color',purple,'LineWidth',2);
-% plot(bins,mean(a.infoPort(a.trialType==3 & ok,:)),'Color',orange,'LineWidth',2);
-% ax.YTick = [0 0.25 0.50 0.75 1];
-% ax.YLim = [-0.1 1.1];
-% plot([0 0],[-1 +1].*10^10,'color','k','yliminclude','off');
-% plot([1.45 1.45],[-1 +1].*10^10,'color','k','yliminclude','off');
-% plot([11.45 11.45],[-1 +1].*10^10,'color','k','yliminclude','off');
-% ax.XLim = [-1 12];
-% %     xlabel('Time relative to go cue (s)');
-% 
-% ax = nsubplot(3,2,3,2);
-% ax.FontSize = 8;
-% ylabel('NO INFO port');
-% plot(bins,mean(a.randPort(a.infoBig==1 & ok,:)),'Color','g','LineWidth',2);
-% plot(bins,mean(a.randPort(a.infoSmall==1 & ok,:)),'Color','m','LineWidth',2); 
-% plot(bins,mean(a.randPort(a.randBig==1 & ok,:)),'Color','b','LineWidth',2);
-% plot(bins,mean(a.randPort(a.randSmall==1 & ok,:)),'Color','c','LineWidth',2);
-% plot(bins,mean(a.randPort(a.trialType==2 & ok,:)),'Color',purple,'LineWidth',2);
-% plot(bins,mean(a.randPort(a.trialType==3 & ok,:)),'Color',orange,'LineWidth',2);
-% ax.YTick = [0 0.25 0.50 0.75 1];
-% ax.YLim = [-0.1 1.1];
-% ax.XLim = [-1 12];
-% plot([0 0],[-1 +1].*10^10,'color','k','yliminclude','off');
-% plot([1.45 1.45],[-1 +1].*10^10,'color','k','yliminclude','off');
-% plot([11.45 11.45],[-1 +1].*10^10,'color','k','yliminclude','off');
-% xlabel('Time relative to go cue (s)');
-% 
-% ha = axes('Position',[0 0 1 1],'Xlim',[0 1],'Ylim',[0  1],'Box','off','Visible','off','Units','normalized', 'clipping' , 'off');
-% h_for_legend=[];
-% hold on;
-% for i = 1:7
-%     h_for_legend(end+1) = plot(ha,0,0, 'color',CCtype(i,:),'linewidth',2);
-% end
-% hold off;
-% 
-% leg = legend(h_for_legend,a.typeLabels,'Location','south','Orientation','horizontal');
-% legend('boxoff');
-% %     text(0.51,0.98,[a.mouseList{m} ' Choice of Side'],'FontSize',14,'FontWeight','bold','HorizontalAlignment','center');        
-% 
-% saveas(fig,fullfile(pathname,[label1 '_PrerevPortDwell']),'pdf');    
-    
+saveas(fig,fullfile(pathname,[label{1} '_preRevLicks']),'pdf');  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1608,81 +1291,8 @@ hold off;
 
 saveas(fig,fullfile(pathname,[label{1} '_ReversalLicks']),'pdf');
    
-% fig = figure();
-% fig.PaperUnits = 'inches';
-% fig.PaperPosition = [0.5 0.5 10 7];
-% set(fig,'renderer','painters');
-% set(fig,'PaperOrientation','landscape');
-% 
-% licklabels={'Info Water', 'No Info C','No Info D','Info No Water'};
-% 
-% ax = nsubplot(1,2,1,1);
-% ax.FontSize = 8;
-% ax.XLim = [0.5 2.5];
-% ax.XTick = [1 2];
-% ax.YLim = [0 1.5];
-% hold on;
-% v1=Violin(a.reversalEarlyLicksMean(idx1rev,1),1);
-% v2=Violin(a.reversalEarlyLicksMean(idx1rev,2),2);
-% v1.ViolinColor='b'; 
-% v1.EdgeColor='none'; 
-% v1.BoxColor='none';
-% v1.ScatterPlot.MarkerFaceColor='k';
-% v1.ScatterPlot.MarkerFaceAlpha=1;
-% v1.ShowMean=true;
-% v2.ViolinColor='r'; 
-% v2.EdgeColor='none'; 
-% v2.BoxColor='none';
-% v2.ScatterPlot.MarkerFaceColor='k';
-% v2.ScatterPlot.MarkerFaceAlpha=1;
-% v2.ShowMean=true;
-% ax.XTickLabel={'Info','No Info'};
-% ylabel('Mean Pre-Odor Licks');
-% title([label1 ' Reversal p = ' num2str(a.reversalEarlyLicksP1(1,1))])
-% hold off;
-% 
-% ax = nsubplot(1,2,1,2);
-% ax.FontSize = 8;
-% ax.XLim = [0.5 4.5];
-% ax.XTick = [1 2 3 4];
-% %     ax.YLim = [0 1.5];
-% hold on;
-% v1=Violin(a.reversalLicksMean(idx1rev,1),1);
-% v2=Violin(a.reversalLicksMean(idx1rev,2),2);
-% v3=Violin(a.reversalLicksMean(idx1rev,3),3);
-% v4=Violin(a.reversalLicksMean(idx1rev,4),4);
-% v1.ViolinColor='g'; 
-% v1.EdgeColor='none'; 
-% v1.BoxColor='none';
-% v1.ScatterPlot.MarkerFaceColor='k';
-% v1.ScatterPlot.MarkerFaceAlpha=1;
-% v1.ShowMean=true;
-% v2.ViolinColor=cornflower; 
-% v2.EdgeColor='none'; 
-% v2.BoxColor='none';
-% v2.ScatterPlot.MarkerFaceColor='k';
-% v2.ScatterPlot.MarkerFaceAlpha=1;
-% v2.ShowMean=true;
-% v3.ViolinColor=cornflower; 
-% v3.EdgeColor='none'; 
-% v3.BoxColor='none';
-% v3.ScatterPlot.MarkerFaceColor='k';
-% v3.ScatterPlot.MarkerFaceAlpha=1;
-% v3.ShowMean=true;
-% v4.ViolinColor='m'; 
-% v4.EdgeColor='none'; 
-% v4.BoxColor='none';
-% v4.ScatterPlot.MarkerFaceColor='k';
-% v4.ScatterPlot.MarkerFaceAlpha=1;
-% v4.ShowMean=true;   
-% ax.XTickLabel=licklabels;
-% ylabel('Mean Pre-Outcome Licks');
-% title([label1 ' Reversal ANOVA p = ' num2str(a.reversalLicksP1(1,1))])
-% hold off;    
-% 
-% saveas(fig,fullfile(pathname,[label1 '_ReversalLicks']),'pdf');
 
-%% PORT PROBABILITY ACROSS REVERSAL all, not just days
+%% PORT PROBABILITY ACROSS REVERSAL
 
 % figure();
 % fig = gcf;
@@ -2125,6 +1735,75 @@ saveas(fig,fullfile(pathname,[label{1} '_training2Correct']),'pdf');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%% PLOT POPULATION MEAN CHOICES AROUND REVERSALS
+
+for d=1:6
+a.reversalMultiPrefsP(1,d) = signrank(a.reversalMultiPrefs(idx1rev,d)*100-50);
+a.reversalMultiPrefsP(2,d) = signrank(a.reversalMultiPrefs(idx2rev,d)*100-50);
+end
+
+fig = figure();
+
+fig = gcf;
+fig.PaperUnits = 'inches';
+fig.PaperPosition = [0.5 0.5 10 7];
+set(fig,'renderer','painters');
+set(fig,'PaperOrientation','landscape');
+
+ax = nsubplot(1,2,1,1);
+ax.FontSize = 8;
+ax.YTick = [0 0.25 0.50 0.75 1];
+ax.YLim = [0 1];
+ax.XLim = [0.5 6.5];
+ax.XTick = [1:6];
+plot([1:3], mean(a.reversalMultiPrefs(idx1rev,1:3),1,'omitnan'),'Color','k','LineWidth',3,'Marker','o','MarkerFaceColor','k','MarkerSize',8);
+for n=1:3
+   errorbar(n,mean(a.reversalMultiPrefs(idx1rev,n),1,'omitnan'),sem(a.reversalMultiPrefs(idx1rev,n)),'Color','k','LineWidth',2,'CapSize',25);
+   text(n, mean(a.reversalMultiPrefs(idx1rev,n),1,'omitnan') + 0.1, ['p=', num2str(a.reversalMultiPrefsP(1,n))], 'HorizontalAlignment', 'center');
+end
+plot([4:6], mean(a.reversalMultiPrefs(idx1rev,4:6),1,'omitnan'),'Color','k','LineWidth',3,'Marker','o','MarkerFaceColor','k','MarkerSize',8);
+for n=4:6
+   errorbar(n,mean(a.reversalMultiPrefs(idx1rev,n),1,'omitnan'),sem(a.reversalMultiPrefs(idx1rev,n)),'Color','k','LineWidth',2,'CapSize',25);
+   text(n, mean(a.reversalMultiPrefs(idx1rev,n),1,'omitnan') + 0.1, ['p=', num2str(a.reversalMultiPrefsP(1,n))], 'HorizontalAlignment', 'center');
+end    
+plot([3.5 3.5],[-10000000 1000000],'color','r','linewidth',2,'linestyle','--','yliminclude','off','xliminclude','off');
+reverseLabels = {'-3','-2','-1','1','2','3'};
+set(gca,'XTickLabel',reverseLabels);
+ylabel({'% choice of', 'info side'});
+xlabel('Day relative to side reversal');
+title(label1)
+hold off;
+axis square;
+
+ax = nsubplot(1,2,1,2);
+ax.FontSize = 8;
+ax.YTick = [0 0.25 0.50 0.75 1];
+ax.YLim = [0 1];
+ax.XLim = [0.5 6.5];
+ax.XTick = [1:6];
+plot([1:3], mean(a.reversalMultiPrefs(idx2rev,1:3),1,'omitnan'),'Color','k','LineWidth',3,'Marker','o','MarkerFaceColor','k','MarkerSize',8);
+for n=1:3
+   errorbar(n,mean(a.reversalMultiPrefs(idx2rev,n),1,'omitnan'),sem(a.reversalMultiPrefs(idx2rev,n)),'Color','k','LineWidth',2,'CapSize',25);
+   text(n, mean(a.reversalMultiPrefs(idx2rev,n),1,'omitnan') + 0.1, ['p=', num2str(a.reversalMultiPrefsP(2,n))], 'HorizontalAlignment', 'center');
+end
+plot([4:6], mean(a.reversalMultiPrefs(idx2rev,4:6),1,'omitnan'),'Color','k','LineWidth',3,'Marker','o','MarkerFaceColor','k','MarkerSize',8);
+for n=4:6
+   errorbar(n,mean(a.reversalMultiPrefs(idx2rev,n),1,'omitnan'),sem(a.reversalMultiPrefs(idx2rev,n)),'Color','k','LineWidth',2,'CapSize',25);
+   text(n, mean(a.reversalMultiPrefs(idx2rev,n),1,'omitnan') + 0.1, ['p=', num2str(a.reversalMultiPrefsP(2,n))], 'HorizontalAlignment', 'center');
+end    
+plot([3.5 3.5],[-10000000 1000000],'color','r','linewidth',2,'linestyle','--','yliminclude','off','xliminclude','off');
+reverseLabels = {'-3','-2','-1','1','2','3'};
+set(gca,'XTickLabel',reverseLabels);
+ylabel({'% choice of', 'info side'});
+xlabel('Day relative to side reversal');
+title(label2)
+hold off;
+axis square;
+
+saveas(fig,fullfile(pathname,[label{1} '_ReversalMultiChoicesIIS']),'pdf');
+
 
 %% OVERALL: PRE-REVERSE (overall.pdf)
 

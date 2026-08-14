@@ -1,30 +1,16 @@
+%% Decision models for water and delay titration sessions with cross-validation
+
+
 %% IMPORT BEHAVIOR DATA
 close all;
-% clear all;
-% load('BehaviorModelData4.mat');
-a=load('C:\Users\ryanb\Downloads\PsychometricPlots\Psycho\Psychophysics/infoSeekData_ALLBEHAVIOR_analyzed_Aug2023.mat');
+
+% load behavior data into 'a' structure
+a=load('infoSeekData_ALLBEHAVIOR_analyzed_Aug2023.mat');
 
 % This script contains the full RLwater + λ-RLinfo model, then drops the
 % terms one at a time to test the sub-component models of RLwater, λ-RLinfo
 % and RLwater + RLinfo separately. We also include a win-stay lose-shift
 % Softmax approximation as a different conceptual model.
-
-% subject, choice (info vs no info), side (left vs right), reward (1 vs 0
-% vs water amount?), trial type (choice vs forced)
-
-% correct vs incorrect vs no choice trials?
-
-% a.info
-% a.mouse
-% a.infoSide
-% a.reward
-% a.correct
-% a.outcome
-% a.rewardDelay
-
-% Correct for pre-Bpod Times
-% ok=sum(a.mice(:,1:16),2)>0;
-% a.rewardDelay(ok)=a.rewardDelay(ok)/1000;
 
 set(0,'DefaultFigureWindowStyle','docked');
 
@@ -64,18 +50,6 @@ end
 % miceToUse= [1 2 3 4]; % of value mice (or delay mice)
 
 a.valueMice = [6 7 8 9 20 23 24 25 26 31 32 33];
-% a.valueDays = {{{33,77},{59,65},{50,71},{31,62},{43,74},{56,68}},...
-%     {{26,27},{41,55},{36,61},{25,70},{30,64},{38,58}},...
-%     {{37,67},{49,55},{43,61},{34,52},{40,64},{46,58}},...
-%     {{36,66},{48,54},{42,60},{33,69},{39,63},{45,57}},...
-%     {{81,82},{104,105},{93,94},{73,113},{87,88},{}},...
-%     {{81,82},{93,94},{105,106},{72,112},{87,88},{99,100}},...
-%     {{68,69},{86,87},{99,100},{63,106},{74,75},{93,94}},...
-%     {{91,92},{116,117},{103,104},{80,119},{97,98},{110,111}},...
-%     {{101,102},{117,118},{127,128},{96,129},{108,109},{121,122}},...
-%     {{47,48},{66,67},{57,58},{42,73},{60,61},{51,52}},...
-%     {{44,45},{63,64},{54,55},{39,70},{57,58},{48,49}},...
-%     {{44,45},{63,64},{55,56},{39,69},{58,59},{48,49}}};
 a.valueDays = {{{{32:33},{75:77}},{{57:59},{63:65}},{{43:50},{69:71}},{{29:31},{60:62}},{{34:42},{72:74}},{{51:56},{66:68}}},...
     {{{26:27},{65:67}},{{39:41},{53:55}},{{31:36},{59:61}},{{23:25},{42:52}},{{28:30},{62:64}},{{37:38},{56:58}}},...
     {{{35:37},{65:67}},{{47:49},{53:55}},{{41:43},{59:61}},{{29:34},{50:52}},{{38:40},{62:64}},{{44:46},{56:58}}},...
@@ -116,12 +90,6 @@ for mm=1:numel(a.valueMice)
 end
 
 a.delayMice = [28 29 30 31 32 33];
-% a.delayDays = {{{52,53},{148,150},{155,156},{46,47}},...
-%     {{49,50},{151,152},{157,158},{42,43}},...
-%     {{80,81},{149,150},{155,156},{141,142}},...
-%     {{80,81},{91,92},{85,86},{73,74}},...
-%     {{77,78},{88,89},{81,82},{70,71}},...
-%     {{77,78},{88,89},{82,83},{69,71}}};
 a.delayDays={{{48:53},{142:150},{151:156},{40:47}},...
     {{44:50},{144:152},{153:158},{38:46}},...
     {{76:81},{143:150},{151:156},{82:87}},...
@@ -156,20 +124,10 @@ end
 % pull that subject's behavior data into relevant vectors (Choice, Info,
 % Side, Reward)
 
-% a.mouseList=unique(a.mouse);
-
-% loop subjects to fit a model for each
-% for m=1:numel(a.mouseList)
-
-% a.mouseVec = [6 7 8 9 31 32 33];
-% miceToUse = [1 2 3 4 5 6 7];
-
-%a.mouseVec = [28 29 30 31 32 33]; %delay and tuning
 a.mouseVec = [6 7 8 9 28 29 30 31 32 33];
 
-%a.mouseVec = [33];
 miceToUse=1:length(a.mouseVec);
-nRuns = 5
+nRuns = 5;
 for mm=1:numel(miceToUse)
     a.TestAccuracies = [];
     a.TrainAIC = [];
@@ -200,9 +158,6 @@ for mm=1:numel(miceToUse)
             allTrials = 3;
         end
         
-    %     valStart=min(a.daysForVal{mm}); % CHANGE THIS TO a.daysForDelay
-    %     valEnd = max(a.daysForVal{mm});
-    %     valDays = valStart:1:valEnd;
         if allTrials==2
             i=find(a.valueMice==m);
             valDays=sort(a.daysForVal{i});
@@ -334,8 +289,8 @@ for mm=1:numel(miceToUse)
             cvCount = cvCount + 1;
         end
         
-        NoS = [nInfoRew1,nNoInfoRew1, nInfoUnRew1,nNoInfoUnRew1,nInfoRew2, nNoInfoRew2,nInfoUnRew2,nNoInfoUnRew2]
-        IterToReachBalance = cvCount
+        NoS = [nInfoRew1,nNoInfoRew1, nInfoUnRew1,nNoInfoUnRew1,nInfoRew2, nNoInfoRew2,nInfoUnRew2,nNoInfoUnRew2];
+        IterToReachBalance = cvCount;
         % vectors for win-stay lose-shift-like model (WS-LS), tracks what happened on
         % t-1 trial
         ttt = 0;

@@ -1,3 +1,9 @@
+%% BehaviordataBpod
+% Loads pre-processed Bpod behavior data files for a designated
+% experimental group in the 4-center port odor information vs water value
+% task and saves the concatenated data to a .mat file
+
+%%
 clear; close all;
 
 datapath=findInfoseekData();
@@ -22,8 +28,6 @@ filesUnique=unique(filesT);
 %%
 
 numFiles = size(filesUnique,1);
-
-f=3;
 
 loadVars={'mouse','day','trial','correct','info','big',...
     'outcome','trialType','trialTypes','infoSide','bigSide','reward',...

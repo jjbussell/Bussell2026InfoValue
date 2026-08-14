@@ -1,14 +1,17 @@
+%% BehaviorAnalysisAll
+
+% Loads concatenated behavior data file(s) and performs statistical
+% analyses including determining preference for information, reaction time,
+% correct trial choices and identifies information side location reversals
+% training periods and computes per-training-day behavioral measures
+
+
 %% LOADING DATA FILES
 
-% a1=a; clear a; % uncomment to begin from already in memory bpod data file
+a1=a; clear a; % to begin from already in memory bpod data file
 
-% To load data into memory:
-% clear; close all;
-% 
-% datapath=findInfoseekData(); % locates the information seeking data files
-% on disk
 
-% Loads the three data files if needed
+% Uncomment if using all three data files. Loads the three data files if needed
 % a1=load('behaviorMiceBpodPorts6.mat');
 % a2=load('behaviorMicePreBpodPorts6_JB334_JB339.mat');
 % a3=load('behaviorMicePreBpodPorts6.mat');
@@ -18,7 +21,8 @@ a1.sessions2.date={a1.sessions(:).date}';
 a1.sessions2.mouse={a1.sessions(:).mouse}';
 
 a1.sessions=a1.sessions2;
-% 
+
+% uncomment if all three data files in use 
 % a2.sessionname=a2.sessions.name;
 % a2.sessiondate=a2.sessions.date;
 % a2.sessionmouse=a2.sessions.mouse;
@@ -26,8 +30,10 @@ a1.sessions=a1.sessions2;
 % a3.sessionname=a3.sessions.name;
 % a3.sessiondate=a3.sessions.date;
 % a3.sessionmouse=a3.sessions.mouse;
-% 
-% % DELETE SESSIONS2!!!!!
+
+
+% some cleanup to be sure all files compatible
+% % DELETE SESSIONS2, a no longer used field
 a1=rmfield(a1,'sessions2');
 % 
 a1.earlyInfoLicks = a1.earlyInfoLicks(a1.correct==1);
@@ -45,10 +51,10 @@ a1.trialLength = a1.trialLength(a1.correct==1);
 a1.trialStart = a1.StartTrial(:,1);
 a1=rmfield(a1,'StartTrial');
 
-% Also need to adjust this to have file and trial number!
 a1.odor2LeavingTime = a1.odor2LeavingTime-a1.odor2On;
 a1.odor2LeavingTime(:,[2 3]) = [a1.file a1.trial];
-% 
+
+% uncomment if using all three data files 
 % a2.earlyInfoLicks = NaN(size(a2.earlyLicks));
 % a2.anticipatoryInfoLicks = NaN(size(a2.earlyLicks));
 % a2.waterInfoLicks = NaN(size(a2.earlyLicks));
@@ -92,9 +98,14 @@ a1.odor2LeavingTime(:,[2 3]) = [a1.file a1.trial];
 % a2.file=a2.file+max(a1.file);
 % a3.file=a3.file+(max(a1.file)+max(a2.file));
 % 
-% %%
-% 
+
+%% return to the 'a' data structre
+
 a=a1;
+
+
+%% To save all three files together now to have ready to use in this script
+
 % vars=fields(a1);
 % %%
 % for i=1:numel(vars)
@@ -108,7 +119,7 @@ a=a1;
 % save(fullfile(datapath,'infoSeekData_ALLBEHAVIOR6.mat'),'-struct','a','-v7.3');
 % 
 % clear a1 a2 a3;
-clear a1
+clear a1 % comment this and uncomment above if using all three data files
 % 
 % % a=load('infoSeekData_ALLBEHAVIOR6.mat'); % to load all of the data
 % together with this loading step already completed

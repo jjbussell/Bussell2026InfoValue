@@ -1,3 +1,10 @@
+%% BehaviorAnalysisWaterVal
+
+% Loads concatenated behavior data file and performs statistical
+% analyses including reaction time,
+% correct trial choices and identifies information side location reversals
+% training periods and computes per-training-day behavioral measures
+
 clear; close all;
 
 datapath=findInfoseekData();
@@ -28,7 +35,7 @@ a1.odor2LeavingTime(:,[2 3]) = [a1.file a1.trial];
 
 a=a1;
 
-
+% re-save as ready-to-use file in this script
 save(fullfile(datapath,'infoSeekData_ALLBEHAVIOR_WaterVal2.mat'),'-struct','a','-v7.3');
 
 clear a1;

@@ -1,7 +1,16 @@
-clear all; close all;
+%% BehaviordataBpod
+% Loads pre-processed Bpod behavior data files for a designated
+% experimental group and saves the concatenated data to a .mat file
 
+%%
+clear; close all;
+
+% utility function finds the Bpod data folder on disk. Substitute with
+% manually inputting a data path
 datapath=findInfoseekData();
 
+% load the settings file (here input manually) for a particular cohort
+% "dataset" with a list of mice and the Bpod protocols used
 summarySettings=load(fullfile(datapath,'BpodInfoseekSummarySettingsWTAll.mat'));
 
 dataset = summarySettings.dataset;
@@ -23,8 +32,8 @@ filesUnique=unique(filesT);
 
 numFiles = size(filesUnique,1);
 
-f=3;
-
+% Manually selecting variables to load from the processed Bpod files to
+% save space
 loadVars={'mouse','day','trial','correct','info',...
     'outcome','trialType','trialTypes','infoSide','reward',...
     'rxn','trialLength','trialLengthCenterEntry','trialLengthTotal','odorDelay','rewardDelay',...
@@ -35,6 +44,7 @@ loadVars={'mouse','day','trial','correct','info',...
     'trialSettings.OdorTime','StartTrial','CenterDelay'}; 
 
 
+% Concatenate data across all files
 for f=1:numFiles
    b=load(fullfile(filesUnique.folder{f},filesUnique.name{f}));
    trialCt=b.trialCt;
@@ -82,5 +92,6 @@ a.odorTime = a.trialSettings.OdorTime;
 a = rmfield( a , 'trialSettings' );
 a.sessions=sessions;
 
-%%
+%% SAVE FILE
+
 save(fullfile(datapath,'behaviorMiceBpodPorts6.mat'),'-struct','a','-v7.3');

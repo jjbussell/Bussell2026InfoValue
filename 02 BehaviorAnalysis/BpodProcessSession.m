@@ -1,52 +1,30 @@
-%% GOALS
-
-%{
-need to put data in a structure to facilitate calcs/plots of
-
-% numTrials
-% water
-% numtrials of each type
-
-
-% outcomes across trials per day
-% % error
-% licks in diff trial epochs
-% % choice / pref (by side)
-% leaving
-% reaction time
-% image time stamp
-
-so structurce with row for each trial
-fields: mouse, day, session, trial outcome,
- licks rel to trial start,image
-events, port exit events/state txn
-
-% good to preserve data in easy to understand original format and just have
-script that can run reproducibly on it
-
-load in files, record names, store date, mouse, protocol, time, ntrials as
-metadata and rawevents (a.files with length of numfiles)
-
-%}
-
+%% BpodProcessSession
+%
+% First-stage processing of raw Bpod session data for the Infoseek task.
+%
+% For each raw session .mat file not already processed:
+%   - loads the raw SessionData produced by Bpod
+%   - extracts the state-machine and event timestamps of interest for
+%     every trial
+%   - derives per-trial behavioral measures (choice, reaction time,
+%     licking, port occupancy, reward, error type, etc.) into a single
+%     struct `a`, with one row per trial
+%   - saves the resulting struct to a 'current_pp' subfolder of the raw
+%     data folder, named <original filename>_pp.mat
+%
+% Raw data is left untouched; this script can be re-run at any time and
+% will only process files that don't already have a corresponding _pp
+% file.
 
 %%
 clear; close all;
 set(0,'DefaultFigureWindowStyle','docked');
 
 %% SELECT NEW DATA
-
-% bpod data folder
-% find files
-% processed data folder
-% find processed files
-
-% process any unprocessed files
-
-% % select folder with new data file(s) to process
-% pathname=uigetdir;
-% files=dir([pathname,'/JB*Infoseek*.mat']);
-% numFiles = size(files,1);
+% Find raw session files and already-processed (_pp) files in the Bpod
+% data folder, then build the list of raw files that still need
+% processing (skip already-processed files and files that are too small
+% to be real sessions).
 
 %%
 pathname=findInfoseekData();
@@ -72,29 +50,20 @@ folders=rawdirs(~ismember(rawnamesbase,ppnamesbase)&rawsize>20000);
 numFiles = size(files,1);
 %%
 
-f = 3;
-
 for f = 1:numFiles
-    
-%     if exist('rawnames')
-        filename = files{f};
-        filepath = fullfile(folders{f},filename);
-%     else
-%         filename = files(f).name;
-%         filepath = fullfile(files(f).folder,filename);
-%     end
-%     filename = files{f};
-%     filepath = fullfile(folders{f},filename);    
-    
-    breaks = strfind(filename,'_');    
+
+    filename = files{f};
+    filepath = fullfile(folders{f},filename);
+
+    breaks = strfind(filename,'_');
     mouse = cellstr(filename(1:breaks(1)-1));
     day = cellstr(filename(breaks(2)+1:breaks(3)-1));
 
-    
+
     % Pull raw data from matfile
     load(filepath);
-    
-    % Session-level data    
+
+    % Session-level data
     a.session.name = filename;
     a.session.date = filename(breaks(2)+1:breaks(3)-1);
     a.session.mouse = filename(1:breaks(1)-1);
@@ -104,37 +73,38 @@ for f = 1:numFiles
     a.session.eventNames = SessionData.EventNames;
     a.session.nTrials = SessionData.nTrials;
     doorProtocol = contains(a.session.protocol,'door','IgnoreCase',true);
-    
+
     % Trial-level data
     for t = 1:SessionData.nTrials
-       a.file(t,1) = f; 
+       a.file(t,1) = f;
        a.mouse(t,1) = mouse;
        a.day(t,1) = day;
        a.trial(t,1) = t;
        a.door(t,1) = doorProtocol;
     end
-    
+
     if numel(SessionData.TrialSettings)~=SessionData.nTrials
-        print('trial settings error ');
-        filename
+        warning('Trial settings count mismatch for file: %s', filename);
     end
-    
+
     if isfield(SessionData.TrialSettings,'GUI')
        a.trialSettings = [SessionData.TrialSettings(:).GUI]';
     end
-        
+
     a.trialSettings = [SessionData.TrialSettings(:)];
     a.trialType = SessionData.TrialTypes';
     a.startTime = SessionData.TrialStartTimestamp';
     a.endTime = SessionData.TrialEndTimestamp';
     a.outcome = SessionData.Outcomes';
-    
+
     trialData = [];
     trialData = [SessionData.RawEvents(:).Trial];
     trialData = [trialData{:}]';
-        
+
     % STATES
-    % includes states for orig doors and timeout
+    % Bpod state-machine states to pull out of each trial's raw data.
+    % Includes states for the original door hardware and the timeout
+    % variant of the task in addition to the main task states.
     stateList = {'TimerStart',...
             'InterTrialInterval',...
             'CenterOdorPreload',...
@@ -150,7 +120,7 @@ for f = 1:numFiles
             'Response',...
             'GracePeriod',...
             'WaitForOdorLeft',...
-            'PreloadOdorLeft',...            
+            'PreloadOdorLeft',...
             'OdorLeft',...
             'OdorALeft',...
             'OdorBLeft',...
@@ -184,7 +154,7 @@ for f = 1:numFiles
             'DoorOpenGraceRight',...
             'RightPortCheck',...
             'RightBigReward',...
-            'RightSmallReward',...  
+            'RightSmallReward',...
             'RightNotPresent',...
             'RightWarning',...
             'OutcomeDelivery',...
@@ -201,12 +171,11 @@ for f = 1:numFiles
             'LeavingTimeout',...
             'EndTrial'};
     a.stateList = stateList;
-    
-    
+
+
     % EVENTS
-    % make sure saving all event names, change events to break out to
-    % select list, then expand those
-    % when expanding states, delete unexpanded
+    % DAQ/lick and global-timer event channels to pull out of each
+    % trial's raw data, in addition to the states above.
     eventList = {'GlobalTimer3_Start','GlobalTimer4_Start','GlobalTimer7_Start',...
         'GlobalTimer8_Start','GlobalTimer3_End','GlobalTimer4_End',...
         'GlobalTimer7_End','GlobalTimer8_End','Port1In','Port1Out',...
@@ -217,72 +186,70 @@ for f = 1:numFiles
         'DIODOORS1_LeftLick_Hi', 'DIODOORS1_LeftLick_Lo', 'DIODOORS1_CenterLick_Hi',...
         'DIODOORS1_CenterLick_Lo','DIODOORS1_RightLick_Hi', 'DIODOORS1_RightLick_Lo',...
         'BNC1High','BNC1Low'};
-    
+
+    % For every trial, copy each listed state/event's raw timestamp(s)
+    % into a.(name){trial}, or NaN if that state/event didn't occur.
     for t = 1:SessionData.nTrials
         for s = 1:numel(stateList)
             if isfield(trialData(t).States,(stateList{s}))
-%                 a.(stateList{s}){t,1} = num2cell(SessionData.RawEvents.Trial{1,t}.States.(stateList{s}));
                 a.(stateList{s}){t,1} = trialData(t).States.(stateList{s});
             else
-%                 a.(stateList{s}){t,1} = 0;
                 a.(stateList{s}){t,1} = [NaN];
             end
         end
 
         for e = 1:numel(eventList)
             if isfield(trialData(t).Events,(eventList{e}))
-%                 a.(eventList{e}){t,1} = num2cell(SessionData.RawEvents.Trial{1,t}.Events.(eventList{e}));
                 a.(eventList{e}){t,1} = trialData(t).Events.(eventList{e});
             else
-%                a.(eventList{e}){t,1} = [0,0];
                a.(eventList{e}){t,1} = [NaN];
             end
         end
     end
-    
+
     % EXPAND STATES AND EVENTS
+    % Each state/event is currently a cell array with one variable-length
+    % vector of timestamps per trial (a state/event can occur more than
+    % once in a trial). Pad every trial's vector with NaN up to the
+    % longest one for that state/event, sort, and stack into a single
+    % trials x occurrences matrix so it can be indexed directly below.
     for s = 1:numel(a.stateList)
         statename = a.stateList{s};
         state = a.(a.stateList{s});
         maxLength = max(cellfun(@numel,state));
-%         result=cellfun(@(x) [cell2mat(reshape(x,1,[])),NaN(1,maxLength-numel(x))],state,'UniformOutput',false);
-%         result=cellfun(@(x) cell2mat([reshape(x,1,[]),NaN(1,maxLength-numel(x))]),state,'UniformOutput',true);
         result=cellfun(@(x) [reshape(x,1,[]),NaN(1,maxLength-numel(x))],state,'UniformOutput',false);
         result2=cellfun(@sort,result,'UniformOutput',false);
-        result3=vertcat(result2{:});        
+        result3=vertcat(result2{:});
         state = [];
-%         a.(statename) = single(cell2mat(result2));
-%         a.(statename) = single(result2);
         a.(statename) = result3;
         result = [];
         result2 = []; result3 = [];
-    end    
-    
+    end
+
     for e = 1:numel(eventList)
         eventname = eventList{e};
         event = a.(eventList{e});
-        maxLength = max(cellfun(@numel,event));               
-%         result=cellfun(@(x) [cell2mat(reshape(x,1,[])),NaN(1,maxLength-numel(x))],event,'UniformOutput',false);
+        maxLength = max(cellfun(@numel,event));
         result=cellfun(@(x) [reshape(x,1,[]),NaN(1,maxLength-numel(x))],event,'UniformOutput',false);
         result2=cellfun(@sort,result,'UniformOutput',false);
-        result3=vertcat(result2{:});        
+        result3=vertcat(result2{:});
         event = [];
-%         a.(eventname) = single(result2);
         a.(eventname) = result3;
         result = [];
         result2 = []; result3 = [];
     end
-    
+
     % TRIALCT
     a.trialCt = numel(a.trialType);
-    
+
     % INFOSIDE
     a.infoSide = [a.trialSettings.InfoSide]';
     a.trialTypes = [a.trialSettings.TrialTypes]';
-    
-    % CHOICE AND CHOICE TIME
 
-    % choice is waitforodorleft,waitforodorright,incorrect,nochoice
+    % CHOICE AND CHOICE TIME
+    % Choice is whichever of WaitForOdorLeft, WaitForOdorRight,
+    % Incorrect, or NoChoice the trial entered; a.choice is that state's
+    % entry timestamp.
 
     a.choice = NaN(a.trialCt,1);
 
@@ -300,10 +267,13 @@ for f = 1:numFiles
     a.choice(~isnan(a.rightChoice)) = a.rightChoice(~isnan(a.rightChoice));
     a.choice(~isnan(a.incorrectChoice)) = a.incorrectChoice(~isnan(a.incorrectChoice));
     a.choice(~isnan(a.noChoice)) = a.noChoice(~isnan(a.noChoice));
-    
+
     a.choiceTrials = a.trialTypes==5 & a.trialType == 1;
-    
+
     % INFO
+    % Whether the mouse chose the informative side (1) or the random
+    % side (0) on this trial, independent of which physical side (left
+    % vs right) was informative that session.
     a.info = NaN(a.trialCt,1);
     a.info((a.infoSide == 0) & ~isnan(a.leftChoice)) = 1;
     a.info((a.infoSide == 0) & ~isnan(a.rightChoice)) = 0;
@@ -311,8 +281,9 @@ for f = 1:numFiles
     a.info((a.infoSide == 1) & ~isnan(a.leftChoice)) = 0;
     a.info((a.trialType == 2) & ~isnan(a.incorrectChoice)) = 0;
     a.info((a.trialType == 3) & ~isnan(a.incorrectChoice)) = 1;
-    
+
     % REWARD PARAMS
+    % Per-trial reward settings pulled from the GUI trial settings.
 
     a.infoBigDrops = [a.trialSettings.InfoBigDrops]';
     a.infoSmallDrops = [a.trialSettings.InfoSmallDrops]';
@@ -326,18 +297,16 @@ for f = 1:numFiles
     a.odorDelay = [a.trialSettings.OdorDelay]';
     a.rewardDelay = [a.trialSettings.RewardDelay]';
     a.odorTime = [a.trialSettings.OdorTime]';
-    
+
     % SIDE ODOR
-    
+    % Onset time of whichever second (side-port) odor state occurred on
+    % this trial, across the four possible odor identities plus timeout.
+
     a.odor2 = [a.OdorALeft(:,1) a.OdorBLeft(:,1) a.OdorCLeft(:,1) a.OdorDLeft(:,1)...
         a.OdorARight(:,1) a.OdorBRight(:,1) a.OdorCRight(:,1) a.OdorDRight(:,1)...
         a.TimeoutOdor(:,1)];
-%     if sum(sum(~isnan(a.odor2),2)==0)>0
-%        a.odor2=[a.OdorLeft(:,1) a.OdorRight(:,1) a.TimeoutOdor(:,1)];
-%     end
     odor2tp = a.odor2';
     a.odor2On=NaN(a.trialCt,1);
-%     a.odor2On = odor2tp(~isnan(odor2tp));
     for t=1:a.trialCt
         if sum(~isnan(a.odor2(t,:)))>0
         a.odor2On(t,1)=a.odor2(t,~isnan(a.odor2(t,:)));
@@ -354,7 +323,7 @@ for f = 1:numFiles
     a.odor2type(a.odorBtrials==1)=2;
     a.odor2type(a.odorCtrials==1)=3;
     a.odor2type(a.odorDtrials==1)=4;
-    
+
     % TONE ON
     a.tone=[a.LeftWarning(:,1) a.RightWarning(:,1)];
     a.toneOn=NaN(a.trialCt,1);
@@ -373,6 +342,9 @@ for f = 1:numFiles
     a.outcomeTime(~isnan(a.TimeoutOutcome(:,2))) = a.TimeoutOutcome(~isnan(a.TimeoutOutcome(:,2)),2);
 
     % CENTER ENTRIES AND EXITS
+    % Port2 (center) can log multiple in/out events per trial; find the
+    % specific exit that follows the go cue (centerExitGo) and the one
+    % that follows the first center-odor presentation (centerExitFirst).
 
     exitDiff=a.Port2Out-a.GoCue(:,1);
     exitDiff(exitDiff<0)=inf;
@@ -380,21 +352,18 @@ for f = 1:numFiles
     indB=sub2ind(size(a.Port2Out),(1:size(a.Port2Out,1))',indA);
     a.centerExitGo = a.Port2Out(indB);
     clear exitDiff indA indB
-   
-    
+
+
     exitDiffFirst = a.Port2Out - a.CenterOdor(:,1);
     exitDiffFirst(exitDiffFirst<0)=inf;
     [~,indA]=min(exitDiffFirst,[],2);
     indB=sub2ind(size(a.Port2Out),(1:size(a.Port2Out,1))',indA);
-    a.centerExitFirst = a.Port2Out(indB);    
+    a.centerExitFirst = a.Port2Out(indB);
 
     % SIDE LEAVING
-
-    %{
-    diff between port1andport3 out and odor2on
-    Only relevant for trials with an odor2 presentation?
-
-    %}
+    % For trials with a second-odor presentation, find the side-port
+    % exit that follows odor2 onset (relevant to the chosen/informative
+    % side port for that trial).
 
     a.odor2LeavingTime = NaN(a.trialCt,1);
     odor2trials = find(isnan(a.TimeoutOdor(:,1)));
@@ -413,7 +382,7 @@ for f = 1:numFiles
               portOut = a.Port3Out(t,:);
           else
               portOut = a.Port1Out(t,:);
-          end       
+          end
        end
        exitDiff = portOut-odor2time;
        if sum(exitDiff>0)>0
@@ -433,11 +402,9 @@ for f = 1:numFiles
     a.trialLengthTotal = a.endTime - a.startTime;
     a.trialLength = a.endTime - (a.GoCue(:,1) + a.startTime);
     a.trialLengthCenterEntry = a.endTime - (a.CenterDelay(:,1) + a.startTime);
-    
-    % INITIATION TIME
-%     a.initTime = a.CenterDelay(:,1);
 
     % TRIAL CHOICE TYPES (includes NP but not no choice or incorrect)
+    % trialType: 1 = free choice, 2 = forced info, 3 = forced random.
 
     a.choiceTypeNames = {'InfoForced','RandForced','Choice'};
     a.choiceTypeCts = [sum(a.trialType == 2) sum(a.trialType == 3) sum(a.trialType == 1)];
@@ -449,6 +416,8 @@ for f = 1:numFiles
     %%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % ALL CORRECT TRIALS (INCLUDES NOT PRESENT BUT NOT NO CHOICE OR INCORRECT)
+    % SessionData.Outcomes codes are grouped below by info/random side and
+    % big/small reward to classify each trial's result.
 
     infoBig = [2,3,11,12];
     infoSmall = [4,5,13,14];
@@ -472,7 +441,8 @@ for f = 1:numFiles
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     %% LEAVING TIMEOUT
-
+    % Trials where the mouse left the side port during the grace period
+    % and incurred a timeout penalty.
 
     a.timeoutGrace(:,1) = sum(~isnan(a.TimeoutGraceLeft),2)/2;
     a.timeoutGrace(:,2) = sum(~isnan(a.TimeoutGraceRight),2)/2;
@@ -480,9 +450,9 @@ for f = 1:numFiles
 
     if sum(~isnan(a.LeavingTimeout))>0
         a.timeout = ~isnan(a.LeavingTimeout(:,1));
-        a.timeoutTime(~isnan(a.timeout)) = a.LeavingTimeout(~isnan(a.timeout),2)-a.LeavingTimeout(~isnan(a.timeout),1);    
+        a.timeoutTime(~isnan(a.timeout)) = a.LeavingTimeout(~isnan(a.timeout),2)-a.LeavingTimeout(~isnan(a.timeout),1);
     else
-        a.timeout = zeros(size(a.LeavingTimeout,1),1);    
+        a.timeout = zeros(size(a.LeavingTimeout,1),1);
     end
 
 
@@ -493,24 +463,25 @@ for f = 1:numFiles
             a.timeoutParam(t,1) = 0;
         end
     end
-    
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % ERRORS
+    % Outcome codes grouped into the five mutually-exclusive trial result
+    % categories stored in a.errorTypes below.
 
     a.centerEntryCount = sum(~isnan(a.CenterOdor),2)/2;
     a.completeInitiation = a.centerEntryCount == 1;
 
     % doesn't include NP (NP info small is not an error)-->NOW IT DOES!
     % NP info small is outcome 5 and 14
-    % how to check if timeout or not?!?
 
     a.infoCorrCodes = [11 13 14];
     a.infoIncorrCodes = [10 12 15];
     a.randCorrCodes = [17 19];
     a.randIncorrCodes = [16 18 20 21];
     a.choiceCorrCodes = [2 4 5 6 8];
-    a.choiceIncorrCodes = [1 3 7 9];    
+    a.choiceIncorrCodes = [1 3 7 9];
 
     a.infoForcedCorr = ismember(a.outcome,a.infoCorrCodes);
     a.infoForcedIncorr = ismember(a.outcome,a.infoIncorrCodes);
@@ -541,11 +512,14 @@ for f = 1:numFiles
     a.errorTypes(ismember(a.outcome,[15,21]))= 3; % incorrect
     a.errorTypes(ismember(a.outcome,[3,5,7,9,12,14,18,20]))= 4; % not present
     a.errorTypes(a.timeout==1)= 5; % timeout
-    
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     % REWARD
+    % Reward volume is inferred from how long the left/right reward
+    % solenoid global timers ran (GlobalTimer3/4), since each timer run
+    % corresponds to one reward drop of a fixed size.
 
     dropSize = 4; % microliters per drop
 
@@ -565,23 +539,23 @@ for f = 1:numFiles
     a.reward = nansum([a.leftReward, a.rightReward],2);
 
     % LICKS
-
-    %{
-    for each trial, find out infoside, side odor time, outcome time
-    Then sum info vs rand licks
-
-    %}
+    % For each trial, reassign left/right lick timestamps into info-side
+    % vs random-side licks based on infoSide, then classify licks by
+    % timing relative to odor2 onset, go cue, and outcome delivery.
+    % Two hardware revisions logged licks on different DIO channels
+    % (DIODOORS1_* for the door rig, DIO1_* otherwise); use whichever one
+    % has data.
     doorLeft=a.DIODOORS1_LeftLick_Hi;
     doorRight=a.DIODOORS1_RightLick_Hi;
-    
+
     if sum(sum(~isnan(doorLeft)))|sum(sum(~isnan(doorRight)))>0
         door=1;
         a.infoLicks = NaN(size(a.infoSide,1),max([size(doorLeft,2) size(doorRight,2)]));
-        a.randLicks = NaN(size(a.infoSide,1),max([size(doorLeft,2) size(doorRight,2)])); 
+        a.randLicks = NaN(size(a.infoSide,1),max([size(doorLeft,2) size(doorRight,2)]));
         a.infoLicks(a.infoSide == 0,1:size(doorLeft,2)) = doorLeft(a.infoSide == 0,:);
         a.infoLicks(a.infoSide == 1,1:size(doorRight,2)) = doorRight(a.infoSide == 1,:);
         a.randLicks(a.infoSide == 1,1:size(doorLeft,2)) = doorLeft(a.infoSide == 1,:);
-        a.randLicks(a.infoSide == 0,1:size(doorRight,2)) = doorRight(a.infoSide == 0,:);          
+        a.randLicks(a.infoSide == 0,1:size(doorRight,2)) = doorRight(a.infoSide == 0,:);
     else
         door=0;
         a.infoLicks = NaN(size(a.infoSide,1),max([size(a.DIO1_LeftLick_Hi,2) size(a.DIO1_RightLick_Hi,2)]));
@@ -589,7 +563,7 @@ for f = 1:numFiles
         a.infoLicks(a.infoSide == 0,1:size(a.DIO1_LeftLick_Hi,2)) = a.DIO1_LeftLick_Hi(a.infoSide == 0,:);
         a.infoLicks(a.infoSide == 1,1:size(a.DIO1_RightLick_Hi,2)) = a.DIO1_RightLick_Hi(a.infoSide == 1,:);
         a.randLicks(a.infoSide == 1,1:size(a.DIO1_LeftLick_Hi,2)) = a.DIO1_LeftLick_Hi(a.infoSide == 1,:);
-        a.randLicks(a.infoSide == 0,1:size(a.DIO1_RightLick_Hi,2)) = a.DIO1_RightLick_Hi(a.infoSide == 0,:);           
+        a.randLicks(a.infoSide == 0,1:size(a.DIO1_RightLick_Hi,2)) = a.DIO1_RightLick_Hi(a.infoSide == 0,:);
     end
 
     a.infoLicks = single(a.infoLicks);
@@ -627,8 +601,13 @@ for f = 1:numFiles
     a.waterLicks = single(NaN(size(a.infoLicks,1),1));
     a.waterLicks(a.info == 1) = a.waterInfoLicks(a.info == 1);
     a.waterLicks(a.info == 0) = a.waterRandLicks(a.info == 0);
-    
+
     % PORT OCCUPANCY
+    % Build a per-trial, time-binned occupancy trace for each port
+    % (1 = mouse in port), in 50 ms bins from -1 to 15 s relative to the
+    % go cue. In/out event counts are first reconciled to handle two
+    % edge cases: the mouse already being in the port at trial start, and
+    % a port entry with no logged exit before the trial ended.
 
     win = 0.050; % bins in ms
     bins = [-1:win:15];
@@ -647,7 +626,7 @@ for f = 1:numFiles
         % if expanded array has different max events
         if size(a.(portOutname),2)~=size(a.(portInname),2)
            if  size(a.(portOutname),2)>size(a.(portInname),2)
-              a.(portInname)(:,end+1) = NaN; 
+              a.(portInname)(:,end+1) = NaN;
            else
                a.(portOutname)(:,end+1) = NaN;
            end
@@ -666,11 +645,10 @@ for f = 1:numFiles
         inCounts = sum(~isnan(a.(portInname)),2);
         outCounts = sum(~isnan(a.(portOutname)),2);
         moreIns = find((outCounts-inCounts)<0);
-    %     a.(portOutname)(moreOuts,1:end-1) = a.(portOutname)(moreOuts,2:end); % if more outs,
         for m = 1:numel(moreIns)
-            noExit = outCounts(moreIns(m))+1; 
+            noExit = outCounts(moreIns(m))+1;
             a.(portOutname)(moreIns(m),noExit) = a.endTime(moreIns(m)) - a.startTime(moreIns(m));
-        end    
+        end
 
         % already in but nothing to subtract
         inCounts = sum(~isnan(a.(portInname)),2);
@@ -688,7 +666,6 @@ for f = 1:numFiles
 
         a.(portNames{p}) = zeros(numel(a.file),numel(bins));
 
-        % NEED TO CHANGE THESE TIMES TO BE RELATIVE TO GO CUE!
         for t = 1:numel(a.file)
            entries = a.(portInname)(t,~isnan(a.(portInname)(t,:)))-a.GoCue(t,2);
            exits = a.(portOutname)(t,~isnan(a.(portOutname)(t,:)))-a.GoCue(t,2);
@@ -697,10 +674,12 @@ for f = 1:numFiles
                binOut = find(bins-exits(e)>0,1)-1;
                a.(portNames{p})(t,(binIn:binOut))=1;
            end
-        end        
+        end
     end
 
     %% PORTS BY INFO VS RANDOM
+    % Remap left/right port occupancy traces to info-side/random-side
+    % based on which physical side was informative that trial.
 
     a.infoPort = zeros(size(a.Port2));
     a.randPort = zeros(size(a.Port2));
@@ -710,10 +689,12 @@ for f = 1:numFiles
     a.infoPort(infoLeft,:) = a.Port1(infoLeft,:);
     a.infoPort(infoRight,:) = a.Port3(infoRight,:);
     a.randPort(infoLeft,:) = a.Port3(infoLeft,:);
-    a.randPort(infoRight,:) = a.Port1(infoRight,:);    
+    a.randPort(infoRight,:) = a.Port1(infoRight,:);
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Save the processed struct next to the raw data, in a 'current_pp'
+    % subfolder, with the same base filename plus a '_pp' suffix.
     [sessionpath,name,ext]=fileparts(filepath);
 
     savedir = fullfile(pathname, 'current_pp');
@@ -725,13 +706,8 @@ for f = 1:numFiles
         savepath=savedir;
     end
 
-    savename=fullfile(savepath,[name '_pp' ext]);    
+    savename=fullfile(savepath,[name '_pp' ext]);
     save(savename,'-struct','a','-v7.3');
     clearvars -except pathname files numFiles f folders;
-    
+
 end % end for each file
-
-
-
-    
-    

@@ -3,13 +3,7 @@
 % LOAD MODEL RESULTS
 
 
-% datapath=uigetdir('','Choose data directory');
-% datapath = 'D:\Dropbox\BpodInfoseek\Analysis\CombinedPipeline';
-
-% datapath = 'D:\Bussell Dropbox\Jennifer Bussell\RajanCollaboration';
 datapath = 'D:\Bussell Dropbox\Jennifer Bussell\BpodInfoseek\BehaviorModel\psycho';
-% datapath = 'C:\Users\Axel\Bussell Dropbox\Bussell Lab\BpodInfoseek\';
-% datapath = 'C:\Users\jbuss\Bussell Dropbox\Jennifer Bussell\RajanCollaboration';
 
 plotfolder=fullfile(datapath,'Psychophysics');
 pathname=plotfolder;
@@ -27,17 +21,16 @@ output_dir = plotfolder;
 set(0,'DefaultFigureWindowStyle','docked'); % plot in docked window
 
 %%
-model = 5
-isSEM = 0
+model = 5;
+isSEM = 0;
 testMice=[6 7 8 9 31 32 33 28 29 30];
-%testMice=[31 32 33];
 ymax = 1;
 delayDiff = [1 4 6 10];
 waterDiff = [1 2 3 4 5];
 valDiff = [-3 -2 -1 0 1];
 
 %%
-addFitLines = 0
+addFitLines = 0;
 realChoicesAll=[]; modelChoicesAll=[];
 vals=[];
 valList=[];
@@ -134,8 +127,8 @@ nsubplot(1,1,1,1);
 % scatter(valRatio,valPref)
 hold on;
 if addFitLines == 1
-h_for_legend(end+1)=plot(curve(:,1),curve(:,2),'Color','k','LineWidth',5)
-h_for_legend(end+1)=plot(modelcurve(:,1),modelcurve(:,2),'Color','r','LineWidth',5)
+h_for_legend(end+1)=plot(curve(:,1),curve(:,2),'Color','k','LineWidth',5);
+h_for_legend(end+1)=plot(modelcurve(:,1),modelcurve(:,2),'Color','r','LineWidth',5);
 end
 % for m=1:numel(a.valueMice)
 for m=1:numel(testMice)
@@ -175,9 +168,10 @@ if isSEM == 1
 end
 
 end
-'Here'
+
 valDiff
 mouseValModel
+
 % scatter(valRatio,valPref,40,'filled')
 % errorbar(valRatio,valPref,valErr,"ok","MarkerSize",5,'MarkerFaceColor','k',"CapSize",10,'LineWidth',1)
 %errorbar(valDiff,valPref,valPref-valErr(:,1),valErr(:,2)-valPref,"ok","MarkerSize",5,'MarkerFaceColor','k',"CapSize",10,'LineWidth',1)
@@ -218,45 +212,6 @@ T_waterval = table(wv_x', wv_real_y', wv_real_err', wv_model_y', wv_model_err', 
     'VariableNames', {'WaterValDiff', 'Real_mean', 'Real_err', 'Model_mean', 'Model_err'});
 disp(T_waterval)
 
-%%
-% 
-% for m=1:numel(testMice)
-%     h_for_legend=[];
-%     if sum(~isnan(mouseValPref(m,:)))>4
-%     [cfit, curve] = fitPsycheCurveWH (valDiff(~isnan(mouseValPref(m,1:5))), mouseValPref(m,~isnan(mouseValPref(m,1:5))),SP2);
-%     [cfit2, curve2] = fitPsycheCurveWH (valDiff(~isnan(mouseValModel(m,1:5))), mouseValModel(m,~isnan(mouseValModel(m,1:5))),SP2);
-% 
-%     figure();
-%     fig = gcf;
-%     fig.PaperUnits = 'inches';
-%     fig.PaperPosition = [0 0 11 8.5];
-%     %     set(fig,'renderer','painters');
-%     set(fig,'PaperOrientation','landscape');
-%     nsubplot(1,1,1,1);
-% %     scatter(valRatio,valPref)
-%     hold on;
-%     if addFitLines == 1
-%     h_for_legend(end+1)=plot(curve(:,1),curve(:,2),'Color','k','LineWidth',5)
-%     h_for_legend(end+1)=plot(curve2(:,1),curve2(:,2),'Color','r','LineWidth',5)
-%     end
-% %     for m=1:numel(a.valueMice)
-%        scatter(valDiff,mouseValPref(m,:),20,'Filled','MarkerFaceColor','k')
-%        scatter(valDiff,mouseValModel(m,:),20,'Filled','MarkerFaceColor','r')
-% %     end
-%     plot([-1 +1].*10^10,[0.5 0.5],'color','k','xliminclude','off');
-%     xticks(valDiff)
-%     xlim([min(valDiff)-0.25 max(valDiff)+0.25])
-%     ylim([0 ymax])
-%     axis square
-%     xlabel('Water Difference')
-%     ylabel('Probability of Choosing Info')
-%     %title(a.mouseList(testMice(m)))
-%     title(testMice(m))
-%     legend(h_for_legend,{'Real','Model'},'Orientation','vertical','Location','southeast','Box','off');
-% 
-%     saveas(fig,fullfile(plotfolder,[num2str(testMice(m)),'_ModeledWaterValue']),'pdf');
-%     end
-% end
 
 %%
 valDiff = [1 4 6 10];
@@ -423,67 +378,6 @@ T_delay = table(delay_x', delay_real_y', delay_real_err', delay_model_y', delay_
     'VariableNames', {'Delay_s', 'Real_mean', 'Real_err', 'Model_mean', 'Model_err'});
 disp(T_delay)
 
-%%
-% 
-% for m=1:numel(testMice)
-%     h_for_legend=[];
-%     if sum(~isnan(mouseValPref(m,:)))>=4
-%     [cfit, curve] = fitPsycheCurveWH (valDiff(~isnan(mouseValPref(m,:))), mouseValPref(m,~isnan(mouseValPref(m,:))),SPs);
-%     [cfit2, curve2] = fitPsycheCurveWH (valDiff(~isnan(mouseValModel(m,:))), mouseValModel(m,~isnan(mouseValModel(m,:))),SPs);
-% 
-%     figure();
-%     fig = gcf;
-%     fig.PaperUnits = 'inches';
-%     fig.PaperPosition = [0 0 11 8.5];
-%     %     set(fig,'renderer','painters');
-%     set(fig,'PaperOrientation','landscape');
-%     nsubplot(1,1,1,1);
-% %     scatter(valRatio,valPref)
-%     hold on;
-%     if addFitLines == 1
-%         h_for_legend(end+1)=plot(curve(:,1),curve(:,2),'Color','k','LineWidth',5);
-%         h_for_legend(end+1)=plot(curve2(:,1),curve2(:,2),'Color','r','LineWidth',5);
-%     end
-% %     for m=1:numel(a.valueMice)
-% 
-%        scatter(valDiff,mouseValPref(m,:),20,'Filled','MarkerFaceColor','k')
-%        scatter(valDiff,mouseValModel(m,:),20,'Filled','MarkerFaceColor','r')
-% %     end
-%     plot([-1 +1].*10^10,[0.5 0.5],'color','k','xliminclude','off');
-%     xticks(valDiff)
-%     xlim([min(valDiff)-0.25 max(valDiff)+0.25])
-%     ylim([0 ymax])
-%     axis square
-%     xlabel('Delay (s)')
-%     ylabel('Probability of Choosing Info')
-%     title(testMice(m))
-%     legend(h_for_legend,{'Real','Model'},'Orientation','vertical','Location','southeast','Box','off');
-% 
-%     saveas(fig,fullfile(plotfolder,[num2str(testMice(m)),'_ModeledDelay']),'pdf');
-%     end
-% end
 
-
-%%
-% x=choices;
-% y=vals;
-% [logitCoef,dev]  = glmfit(x,y,'binomial','link','logit');
-% 
-% logitFit = glmval(logitCoef,[0.25 0.5 0.75 1],'logit');
-% % plot(x,y,'bs', x,logitFit,'r-');
-% 
-% %% FIND ALL VALUE DAYS
-% 
-% 
-% for mm=1:numel(a.delayMice)
-%     m=a.delayMice(mm);
-%     delayDays=[];
-%     for v=1:numel(a.delayDays{mm})
-%         delayDays=[delayDays;cell2mat(a.delayDays{mm}{v})'];
-%     end
-%     a.daysForDelay{mm}=delayDays;
-% end
-% 
-% % unique(a.rewardParams(a.mice(:,6)==1&ismember(a.mouseDay,min(daysForVal{1}):1:max(daysForVal{1})),:),'rows')
 
 set(0,'DefaultFigureWindowStyle','normal');
