@@ -1,3 +1,8 @@
+%% InfoseekNeuralAnalysis
+
+%
+
+
 %% TO PULL MULTI- or SINGLE-MOUSE, MULTI-SESSION DATA IN AND ANALYZE
 
 clear all; close all;
