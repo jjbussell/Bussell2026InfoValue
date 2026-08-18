@@ -1966,3 +1966,179 @@ saveas(fig,fullfile(output_dir,[strjoin(mice,'_'),'_PCprojection_INFO']),'pdf');
 exportgraphics(fig,fullfile(output_dir,[strjoin(mice,'_'),'_PCprojection2_INFO.pdf']),'ContentType','vector')
 
 
+%% SINGLE CELLS
+
+y_info=mean(a.C_odor1FirstInfoForced,3,'omitnan');
+y_info=y_info-mean(y_info(:,30:40),2);
+y_rand=mean(a.C_odor1FirstRandForced,3,'omitnan');
+y_rand=y_rand-mean(y_rand(:,30:40),2);
+[~,INdiffIdx] = sort(mean(y_info(:,40:60),2)-mean(y_rand(:,40:60),2),'descend');
+
+idx=INdiffIdx;
+
+% MEAN ACTIVITY ALL EVENTS
+
+uu = 1;
+idx=INdiffIdx;
+numplot=5;
+nrange=1:numplot:a.neuronCt;
+
+n=1;
+for n=1:numel(nrange)
+
+    figure();
+    fig = gcf;
+    fig.PaperUnits = 'inches';
+    fig.PaperPosition = [0 0 8.5 11];
+    %     set(fig,'renderer','painters');
+    set(fig,'PaperOrientation','portrait');
+    fs = 8;
+    width = 0.5;
+
+    % for uu = 1:a.neuronCt
+    us=nrange(n):nrange(n)+numplot-1;
+    for i=1:numplot
+        
+        uu=us(i);
+        if uu<=a.neuronCt
+        u = idx(uu);
+        
+        ax1=nsubplot(numplot,3,i,1);
+        e=3;
+        t=a.t{e};
+        hold on;
+        curcolor=a.purple;
+        y=a.C_odor1FirstInfoForced;
+        ycell = y(u,:,:);
+        ymean = mean(ycell,3,'omitnan');
+        ysem = nanstd(ycell,[],3) ./ sqrt(size(ycell,3));    
+        h = fill([a.t{e}, fliplr(a.t{e})], [ymean-ysem, fliplr(ymean+ysem)],curcolor,'EdgeColor','none');
+        set(h, 'FaceAlpha', 0.25);
+        plot(ax1,t,ymean,'color',curcolor,'linewidth',width); % only this plot is used for legend!!
+        plot(ax1,[0 0],[-1 +1].*10^10,'color','k','yliminclude','off');
+        plot(ax1,[0.2 0.2],[-1 +1].*10^10,'color','k','yliminclude','off');
+        y=a.C_odor1FirstRandForced;
+        ycell = y(u,:,:);
+        ymean = mean(ycell,3,'omitnan');
+        ysem = nanstd(ycell,[],3) ./ sqrt(size(ycell,3));
+        curcolor=a.orange;
+        h = fill([a.t{e}, fliplr(a.t{e})], [ymean-ysem, fliplr(ymean+ysem)],curcolor,'EdgeColor','none');
+        set(h, 'FaceAlpha', 0.25);    
+        plot(ax1,t,ymean,'color',curcolor,'linewidth',width); % only this plot is used for legend!!
+        plot(ax1,[0 0],[-1 +1].*10^10,'color','k','yliminclude','off');
+        plot(ax1,[0.2 0.2],[-1 +1].*10^10,'color','k','yliminclude','off');
+        ylabel({[' Cell ',num2str(u)]});
+        xlim([-0.4 1.4]);
+        xlabel('Seconds');
+        ylim([0 5]);
+        yticks(0:5);
+        set(gca,'fontsize',fs);    
+        xticks(-2:0.2:2);            
+        hold off;
+        title('Center Odor');
+
+        ax2=nsubplot(numplot,3,i,2);
+        e=6;
+        t=a.t{e};
+        hold on;
+        curcolor='g';
+        y=a.C_odor2A;
+        ycell = y(u,:,:);
+        ymean = mean(ycell,3,'omitnan');
+        ysem = nanstd(ycell,[],3) ./ sqrt(size(ycell,3));    
+        h = fill([a.t{e}, fliplr(a.t{e})], [ymean-ysem, fliplr(ymean+ysem)],curcolor,'EdgeColor','none');
+        set(h, 'FaceAlpha', 0.25);
+        plot(ax2,t,ymean,'color',curcolor,'linewidth',width); % only this plot is used for legend!!
+        y=a.C_odor2B;
+        ycell = y(u,:,:);
+        ymean = mean(ycell,3,'omitnan');
+        ysem = nanstd(ycell,[],3) ./ sqrt(size(ycell,3));
+        curcolor='m';
+        h = fill([a.t{e}, fliplr(a.t{e})], [ymean-ysem, fliplr(ymean+ysem)],curcolor,'EdgeColor','none');
+        set(h, 'FaceAlpha', 0.25);    
+        plot(ax2,t,ymean,'color',curcolor,'linewidth',width); % only this plot is used for legend!!
+        y=a.C_odor2C;
+        ycell = y(u,:,:);
+        ymean = mean(ycell,3,'omitnan');
+        ysem = nanstd(ycell,[],3) ./ sqrt(size(ycell,3));
+        curcolor=a.cornflower;
+        h = fill([a.t{e}, fliplr(a.t{e})], [ymean-ysem, fliplr(ymean+ysem)],curcolor,'EdgeColor','none');
+        set(h, 'FaceAlpha', 0.25);    
+        plot(ax2,t,ymean,'color',curcolor,'linewidth',width,'linestyle','--'); % only this plot is used for legend!!   
+        y=a.C_odor2D;
+        ycell = y(u,:,:);
+        ymean = mean(ycell,3,'omitnan');
+        ysem = nanstd(ycell,[],3) ./ sqrt(size(ycell,3));
+        curcolor=a.cornflower;
+        h = fill([a.t{e}, fliplr(a.t{e})], [ymean-ysem, fliplr(ymean+ysem)],curcolor,'EdgeColor','none');
+        set(h, 'FaceAlpha', 0.25);    
+        plot(ax2,t,ymean,'color',curcolor,'linewidth',width); % only this plot is used for legend!!        
+        plot(ax2,[0 0],[-1 +1].*10^10,'color','k','yliminclude','off');
+        plot(ax2,[0.2 0.2],[-1 +1].*10^10,'color','k','yliminclude','off');
+        xlim([-0.4 1.4]);
+        xlabel('Seconds');
+        ylim([0 5]);
+        yticks(0:5);
+        set(gca,'fontsize',fs);    
+        xticks(-2:0.2:2);            
+        hold off;
+        title('Side Odor');
+        
+        ax3=nsubplot(numplot,3,i,3);
+        e=7;
+        t=a.t{e};
+        hold on;
+        curcolor='g';
+        y=a.C_outcomeInfoBig;
+        ycell = y(u,:,:);
+        ymean = mean(ycell,3,'omitnan');
+        ysem = nanstd(ycell,[],3) ./ sqrt(size(ycell,3));    
+        h = fill([a.t{e}, fliplr(a.t{e})], [ymean-ysem, fliplr(ymean+ysem)],curcolor,'EdgeColor','none');
+        set(h, 'FaceAlpha', 0.25);
+        plot(ax3,t,ymean,'color',curcolor,'linewidth',width); % only this plot is used for legend!!
+        y=a.C_outcomeInfoSmall;
+        ycell = y(u,:,:);
+        ymean = mean(ycell,3,'omitnan');
+        ysem = nanstd(ycell,[],3) ./ sqrt(size(ycell,3));
+        curcolor='m';
+        h = fill([a.t{e}, fliplr(a.t{e})], [ymean-ysem, fliplr(ymean+ysem)],curcolor,'EdgeColor','none');
+        set(h, 'FaceAlpha', 0.25);    
+        plot(ax3,t,ymean,'color',curcolor,'linewidth',width); % only this plot is used for legend!!
+        y=a.C_outcomeRandBig;
+        ycell = y(u,:,:);
+        ymean = mean(ycell,3,'omitnan');
+        ysem = nanstd(ycell,[],3) ./ sqrt(size(ycell,3));
+        curcolor='b';
+        h = fill([a.t{e}, fliplr(a.t{e})], [ymean-ysem, fliplr(ymean+ysem)],curcolor,'EdgeColor','none');
+        set(h, 'FaceAlpha', 0.25);    
+        plot(ax3,t,ymean,'color',curcolor,'linewidth',width); % only this plot is used for legend!! 
+        y=a.C_outcomeRandSmall;
+        ycell = y(u,:,:);
+        ymean = mean(ycell,3,'omitnan');
+        ysem = nanstd(ycell,[],3) ./ sqrt(size(ycell,3));
+        curcolor='c';
+        h = fill([a.t{e}, fliplr(a.t{e})], [ymean-ysem, fliplr(ymean+ysem)],curcolor,'EdgeColor','none');
+        set(h, 'FaceAlpha', 0.25);    
+        plot(ax3,t,ymean,'color',curcolor,'linewidth',width); % only this plot is used for legend!!        
+        plot(ax3,[0 0],[-1 +1].*10^10,'color','k','yliminclude','off');
+        plot(ax3,[0.2 0.2],[-1 +1].*10^10,'color','k','yliminclude','off');
+        ylabel({[' Cell ',num2str(u)]});
+        xlim([-0.4 1.4]);
+        xlabel('Seconds');
+        ylim([0 5]);
+        yticks(0:5);
+%         setlim(ax3,'ylim','tight');
+        set(gca,'fontsize',fs);    
+        xticks(-2:0.2:2);            
+        hold off;
+        title('Outcome');        
+        
+        end
+    end
+        % BIG TITLE!!!!!!!!!!
+    ha = axes('Position',[0 0 1 1],'Xlim',[0 1],'Ylim',[0  1],'Box','off','Visible','off','Units','normalized', 'clipping' , 'off');
+    text(0.5, 0.95,[strjoin(mice,' _ ') ' sort by INFO-No INFO, cells ' num2str(nrange(n)) '-' num2str(nrange(n)+numplot-1)],'FontSize',14,'FontWeight','bold','HorizontalAlignment','center');
+    
+    saveas(fig,fullfile(cellpath,[strjoin(mice,' _ '),'_MeanConditionalActivity_INFODiffsort_Cells ',num2str(nrange(n)),'-',num2str(nrange(n)+numplot-1)]),'pdf');
+    close; 
+end
