@@ -391,3 +391,53 @@ title('Small Day 2')
 colorcet('D1');
 
 saveas(fig,fullfile(plotfolder,[strjoin(mice,'_') '_ConsecutiveDayHeatmapWater']),'pdf');
+
+%% LOAD CROSS-DAY SCOUT REGISTRATION
+
+load('JB483_4days_20240614_20240618_20240625_20240628_SCOUTreg_stab.mat')
+probsAll{1}=probs;
+load('JB484_4days_20240516_20240517_20240524_20240528_stab.mat')
+probsAll{2}=probs;
+load('JB506_4days_20250205_20250206_20250212_20250213_SCOUTreg_stab.mat')
+probsAll{3}=probs;
+load('JB507_4days_20250206_20250207_20250213_20250214_SCOUTreg_stab.mat')
+probsAll{4}=probs;
+load('JB509_4days_20250205_20250206_20250213_20250214_SCOUTreg_stab.mat')
+probsAll{5}=probs;
+
+%% PLOT CROSS-DAY REGISTRATION PROBABILITIES
+
+fig = figure();    
+fig = gcf;
+fig.PaperUnits = 'inches';
+fig.PaperPosition = [0.5 0.5 10 7];
+set(fig,'renderer','painters');
+set(fig,'PaperOrientation','landscape');
+
+ax = nsubplot(1,1,1,1);
+ax.FontSize = 8;
+ax.XTick = [1 2 3 4 5];
+ax.XLim = [0,6];
+ax.YTick = [0 0.25 0.50 0.75 1];
+% ax.XTickLabel = {label1,label2};
+ax.YLim = [0 1];
+
+for i=1:5
+    v=Violin(probsAll{i},i); 
+    v.ViolinColor=[0.4 0.4 0.4];
+    v.EdgeColor='none'; 
+    v.BoxColor='none';
+    v.ScatterPlot.MarkerFaceColor='k';
+    v.ScatterPlot.MarkerFaceAlpha=1;
+    v.ShowMean=true;    
+end
+
+% text(0.5,0.1,{['mean ' num2str(mean(choiceSort1,'omitnan'))] ['p = ' num2str(p1)]})
+% text(1.5,0.1,{['mean ' num2str(mean(choiceSort2,'omitnan'))] ['p = ' num2str(p2)]})
+% ylabel('Initial info side preference');
+% xlabel('Mouse');
+% title([label{1} ' p=' num2str(p)]);
+hold off;
+% axis square;
+
+saveas(fig,fullfile(plotfolder,'WaterValSCOUTProbs'),'pdf');

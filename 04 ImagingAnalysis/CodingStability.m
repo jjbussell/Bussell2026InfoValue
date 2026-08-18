@@ -1,16 +1,13 @@
-% find which day each info first trial is from, same for no info
-% mean activity on that trial
-% for each cell, plot mean info day 1 vs mean info day 2
-% a.C_odor1FirstInfoForced, a.C_odor1FirstRandForced
+%% CodingStability
 
-% a.day(a.imagingChoice==1 & a.imagingPrevCorrect == 1)
+%% Counts of cells
 
 mouseCells=histc(a.mouse(:),unique(a.mouse));
 mouseCellCts=[0; cumsum(mouseCells)];
 trialsM=sum(~isnan(a.C_events{3}(cumsum(mouseCells),1,:)),3);
 trialCts=[0;cumsum(trialsM)];
 
-%%
+%% Organize data by session (day)
 
 for d=1:4
     dayInfo=[];
@@ -43,7 +40,7 @@ for d=1:4
 end
 
 
-%%
+%% Correlation between consecutive days
 
 fig = figure();
 fig.PaperUnits = 'inches';
@@ -82,12 +79,9 @@ axis square;
 hold off;
 saveas(fig,fullfile(plotfolder,[strjoin(mice,'_') '_ConsecutiveDayCorr']),'pdf');
 
-%%
+%% HEATMAP of consecutive-day activity
 
 color_limits = [-1.2 1.2];
-% diff_limits = [-0.6 0.6];
-
-% a.test= make_colormap(a.darkcyan,'k',[0.85 0 0]);
 
 e=3;
 
@@ -172,7 +166,7 @@ xticks2 = get(gca, 'XTick'); % Get current x-axis ticks
 xticks2 = xticks2 + PID;
 xticks(xticks2);
 xticklabels2 = xticks2 - PID; % Adjust labels so that zero is at 0.075
-set(gca, 'XTickLabel', xticklabels2);
+set(gca, 'XTickLabel', xticklabels2)
 % plot([0 0],[-1 +1].*10^10,'w','yliminclude','off');
 % plot([0.2 0.2],[-1 +1].*10^10,'w','yliminclude','off');
 axis tight;
@@ -209,52 +203,3 @@ title('Rand Day 2')
 colorcet('D1');
 
 saveas(fig,fullfile(plotfolder,[strjoin(mice,'_') '_ConsecutiveDayHeatmap']),'pdf');
-
-%%
-
-load('JB483_4days_20240614_20240618_20240625_20240628_SCOUTreg_stab.mat')
-probsAll{1}=probs;
-load('JB484_4days_20240516_20240517_20240524_20240528_stab.mat')
-probsAll{2}=probs;
-load('JB506_4days_20250205_20250206_20250212_20250213_SCOUTreg_stab.mat')
-probsAll{3}=probs;
-load('JB507_4days_20250206_20250207_20250213_20250214_SCOUTreg_stab.mat')
-probsAll{4}=probs;
-load('JB509_4days_20250205_20250206_20250213_20250214_SCOUTreg_stab.mat')
-probsAll{5}=probs;
-
-%%
-fig = figure();    
-fig = gcf;
-fig.PaperUnits = 'inches';
-fig.PaperPosition = [0.5 0.5 10 7];
-set(fig,'renderer','painters');
-set(fig,'PaperOrientation','landscape');
-
-ax = nsubplot(1,1,1,1);
-ax.FontSize = 8;
-ax.XTick = [1 2 3 4 5];
-ax.XLim = [0,6];
-ax.YTick = [0 0.25 0.50 0.75 1];
-% ax.XTickLabel = {label1,label2};
-ax.YLim = [0 1];
-
-for i=1:5
-    v=Violin(probsAll{i},i); 
-    v.ViolinColor=[0.4 0.4 0.4];
-    v.EdgeColor='none'; 
-    v.BoxColor='none';
-    v.ScatterPlot.MarkerFaceColor='k';
-    v.ScatterPlot.MarkerFaceAlpha=1;
-    v.ShowMean=true;    
-end
-
-% text(0.5,0.1,{['mean ' num2str(mean(choiceSort1,'omitnan'))] ['p = ' num2str(p1)]})
-% text(1.5,0.1,{['mean ' num2str(mean(choiceSort2,'omitnan'))] ['p = ' num2str(p2)]})
-% ylabel('Initial info side preference');
-% xlabel('Mouse');
-% title([label{1} ' p=' num2str(p)]);
-hold off;
-% axis square;
-
-saveas(fig,fullfile(plotfolder,'WaterValSCOUTProbs'),'pdf');
