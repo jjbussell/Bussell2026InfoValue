@@ -239,27 +239,27 @@ for m=1:numel(mice)
     c.C_outcomeBig = a.C_outcome(:,:,a.imagingOutcome == 2 | a.imagingOutcome == 6 | a.imagingOutcome == 11| a.imagingOutcome == 17);
     c.C_outcomeSmall = a.C_outcome(:,:,a.imagingOutcome == 4 | a.imagingOutcome == 8 | a.imagingOutcome == 13 | a.imagingOutcome == 14 | a.imagingOutcome == 19 | a.imagingOutcome == 5);
 
-    
-    c.C_trial=a.C_trial;
-    c.C_trialInfo=a.C_trial(:,:, a.imagingPrevCorrect == 1 & (a.imagingOutcome == 11 | a.imagingOutcome == 13 | a.imagingOutcome == 14));
-    c.C_trialRand=a.C_trial(:,:, a.imagingPrevCorrect == 1 & (a.imagingOutcome == 17 | a.imagingOutcome == 19));
-    c.C_trialInfoForcedBig = a.C_trial(:,:,a.imagingOutcome == 11 & a.imagingPrevCorrect == 1);
-    c.C_trialInfoForcedSmall = a.C_trial(:,:, a.imagingPrevCorrect == 1 & (a.imagingOutcome == 13 | a.imagingOutcome == 14));
-    c.C_trialRandForcedBig = a.C_trial(:,:,a.imagingOutcome == 17 & a.imagingPrevCorrect == 1);
-    c.C_trialRandForcedSmall = a.C_trial(:,:,a.imagingOutcome == 19 & a.imagingPrevCorrect == 1);
-    c.C_trialBig=a.C_trial(:,:, a.imagingPrevCorrect == 1 & (a.imagingOutcome == 2 | a.imagingOutcome == 6 | a.imagingOutcome == 11| a.imagingOutcome == 17));
-    c.C_trialSmall=a.C_trial(:,:, a.imagingPrevCorrect == 1 & (a.imagingOutcome == 4 | a.imagingOutcome == 8 | a.imagingOutcome == 13 | a.imagingOutcome == 14 | a.imagingOutcome == 19 | a.imagingOutcome == 5));
-    
-    c.C_trialLeft=a.C_trial(:,:,(a.infoSide==0 & a.imagingPrevCorrect == 1 & (a.imagingOutcome==11 | a.imagingOutcome==13 | a.imagingOutcome==14)) | (a.infoSide == 1 & a.imagingPrevCorrect == 1& (a.imagingOutcome==17 | a.imagingOutcome==19)));
-    c.C_trialRight=a.C_trial(:,:,(a.infoSide==1 & a.imagingPrevCorrect == 1& (a.imagingOutcome==11 | a.imagingOutcome==13 | a.imagingOutcome==14)) | (a.infoSide == 0 & a.imagingPrevCorrect == 1& (a.imagingOutcome==17 | a.imagingOutcome==19)));
-
-    c.C_trialInfoPrevInfo = a.C_trial(:,:, (a.imagingPrevOutcome == 11 | a.imagingPrevOutcome == 13 | a.imagingPrevOutcome == 14) & (a.imagingOutcome == 11 | a.imagingOutcome == 13 | a.imagingOutcome == 14));
-    c.C_trialInfoPrevRand = a.C_trial(:,:, (a.imagingPrevOutcome == 17 | a.imagingPrevOutcome == 19) & (a.imagingOutcome == 11 | a.imagingOutcome == 13 | a.imagingOutcome == 14));
-    c.C_trialRandPrevInfo =a.C_trial(:,:, (a.imagingPrevOutcome == 11 | a.imagingPrevOutcome == 13 | a.imagingPrevOutcome == 14) & (a.imagingOutcome == 17 | a.imagingOutcome == 19));
-    c.C_trialRandPrevRand =a.C_trial(:,:, (a.imagingPrevOutcome == 17 | a.imagingPrevOutcome == 19) & (a.imagingOutcome == 17 | a.imagingOutcome == 19));
-    
-    c.C_trialRandForcedC = a.C_trial(:,:,a.imagingOdor2 == 3 & a.imagingChoice==3 & a.imagingPrevCorrect == 1);
-    c.C_trialRandForcedD = a.C_trial(:,:,a.imagingOdor2 == 4 & a.imagingChoice==3 & a.imagingPrevCorrect == 1);
+%  UNCOMMENT THIS SECTION TO ANALYZE FULL-TRIAL ACTIVITY. TAKES LARGE AMOUNTS OF MEMORY    
+%     c.C_trial=a.C_trial;
+%     c.C_trialInfo=a.C_trial(:,:, a.imagingPrevCorrect == 1 & (a.imagingOutcome == 11 | a.imagingOutcome == 13 | a.imagingOutcome == 14));
+%     c.C_trialRand=a.C_trial(:,:, a.imagingPrevCorrect == 1 & (a.imagingOutcome == 17 | a.imagingOutcome == 19));
+%     c.C_trialInfoForcedBig = a.C_trial(:,:,a.imagingOutcome == 11 & a.imagingPrevCorrect == 1);
+%     c.C_trialInfoForcedSmall = a.C_trial(:,:, a.imagingPrevCorrect == 1 & (a.imagingOutcome == 13 | a.imagingOutcome == 14));
+%     c.C_trialRandForcedBig = a.C_trial(:,:,a.imagingOutcome == 17 & a.imagingPrevCorrect == 1);
+%     c.C_trialRandForcedSmall = a.C_trial(:,:,a.imagingOutcome == 19 & a.imagingPrevCorrect == 1);
+%     c.C_trialBig=a.C_trial(:,:, a.imagingPrevCorrect == 1 & (a.imagingOutcome == 2 | a.imagingOutcome == 6 | a.imagingOutcome == 11| a.imagingOutcome == 17));
+%     c.C_trialSmall=a.C_trial(:,:, a.imagingPrevCorrect == 1 & (a.imagingOutcome == 4 | a.imagingOutcome == 8 | a.imagingOutcome == 13 | a.imagingOutcome == 14 | a.imagingOutcome == 19 | a.imagingOutcome == 5));
+%     
+%     c.C_trialLeft=a.C_trial(:,:,(a.infoSide==0 & a.imagingPrevCorrect == 1 & (a.imagingOutcome==11 | a.imagingOutcome==13 | a.imagingOutcome==14)) | (a.infoSide == 1 & a.imagingPrevCorrect == 1& (a.imagingOutcome==17 | a.imagingOutcome==19)));
+%     c.C_trialRight=a.C_trial(:,:,(a.infoSide==1 & a.imagingPrevCorrect == 1& (a.imagingOutcome==11 | a.imagingOutcome==13 | a.imagingOutcome==14)) | (a.infoSide == 0 & a.imagingPrevCorrect == 1& (a.imagingOutcome==17 | a.imagingOutcome==19)));
+% 
+%     c.C_trialInfoPrevInfo = a.C_trial(:,:, (a.imagingPrevOutcome == 11 | a.imagingPrevOutcome == 13 | a.imagingPrevOutcome == 14) & (a.imagingOutcome == 11 | a.imagingOutcome == 13 | a.imagingOutcome == 14));
+%     c.C_trialInfoPrevRand = a.C_trial(:,:, (a.imagingPrevOutcome == 17 | a.imagingPrevOutcome == 19) & (a.imagingOutcome == 11 | a.imagingOutcome == 13 | a.imagingOutcome == 14));
+%     c.C_trialRandPrevInfo =a.C_trial(:,:, (a.imagingPrevOutcome == 11 | a.imagingPrevOutcome == 13 | a.imagingPrevOutcome == 14) & (a.imagingOutcome == 17 | a.imagingOutcome == 19));
+%     c.C_trialRandPrevRand =a.C_trial(:,:, (a.imagingPrevOutcome == 17 | a.imagingPrevOutcome == 19) & (a.imagingOutcome == 17 | a.imagingOutcome == 19));
+%     
+%     c.C_trialRandForcedC = a.C_trial(:,:,a.imagingOdor2 == 3 & a.imagingChoice==3 & a.imagingPrevCorrect == 1);
+%     c.C_trialRandForcedD = a.C_trial(:,:,a.imagingOdor2 == 4 & a.imagingChoice==3 & a.imagingPrevCorrect == 1);
 
    
     % BASELINES
@@ -753,228 +753,178 @@ activityDifference2 = y1mean2-y2mean2;
 a.activityTimeDiffSideEntry = (sign(activityDifference1).*activityDifference2+sign(activityDifference2).*activityDifference1).*0.5;
 
 
-%%
-clear cy yy y1 yy1 y2 yy2 y11 y12 y y21 y22 s1 y1shuffle s2 y2shuffle...
-    timeBaseline randActivity shuffleDiff badidx maxidx y1mean y2mean...
-    y1meanPost y1meanPre y2meanPost y2meanPre Activity_1 Activity_2 shuffle...
-    cy y1mean1 y1mean2 y2mean1 y2mean2 activityDifference1 activityDifference2...
-    activityDifferenceTrial1 activityDifferenceTrial2 maxval ybase...
-    ybaseline ybaselineExp ypost ymean randActivity
+%% UNCOMMENT BELOW TO ANALYZE FULL-TRIAL ACTIVITY. TAKES LARGE AMOUNTS OF MEMORY
 
-%% SHUFFLE FULL TRIAL ACTIVITY
+% clear cy yy y1 yy1 y2 yy2 y11 y12 y y21 y22 s1 y1shuffle s2 y2shuffle...
+%     timeBaseline randActivity shuffleDiff badidx maxidx y1mean y2mean...
+%     y1meanPost y1meanPre y2meanPost y2meanPre Activity_1 Activity_2 shuffle...
+%     cy y1mean1 y1mean2 y2mean1 y2mean2 activityDifference1 activityDifference2...
+%     activityDifferenceTrial1 activityDifferenceTrial2 maxval ybase...
+%     ybaseline ybaselineExp ypost ymean randActivity
+% 
 
-disp('Shuffle full trial');
+% % SHUFFLE FULL TRIAL ACTIVITY
+% 
+% disp('Shuffle full trial');
+% 
+% mouseCells=histc(a.mouse(:),unique(a.mouse));
+% mouseCellCts=[0; cumsum(mouseCells)];
+% 
+% for cd = 1:size(a.trialCompNames)
+%     cname = a.trialCompNames{cd};
+%     e = a.trialCompEvents(cd);
+%     cy = cellfun(@(z) a.(z),cname,'uniform',0);    
+%     y1 = cy{1}; % all mice all activity for condition 1
+%     y2 = cy{2};
+%     n1=sum(~isnan(y1(cumsum(mouseCells),1,:)),3); % number of non-NaN trials per mouse
+%     n2=sum(~isnan(y2(cumsum(mouseCells),1,:)),3);
+%     clear ii;
+%     for m=1:numel(mice)
+%         yy1{m}=y1(mouseCellCts(m)+1:mouseCellCts(m+1),:,1:n1(m)); % that mouse's activity (noNaN) for condition 1
+%         yy2{m}=y2(mouseCellCts(m)+1:mouseCellCts(m+1),:,1:n2(m));
+%         yy{m}=cat(3,yy1{m},yy2{m}); % stack condition 1 and condition 2 for that mouse
+%         ii{m}(1:n1(m),1)=1; % label for condition 1 trials for that mouse
+%         ii{m}(n1(m)+1:n1(m)+n2(m),1)=2; % label for condition 2 trials for that mouse       
+%     end
+%     
+%     clear yy1 yy2 y1 y2 cy
+%     
+%     for j=1:1000
+%         for m=1:numel(mice) 
+%             shuffle = ii{m}(randperm(size(ii{m},1))'); % shuffle whether trials are condition 1 or condition 2
+%             y1shuffle=yy{m}(:,:,shuffle==1); % take a random subset to be condition 1 of condition 1 size
+%             s1=NaN(size(y1shuffle,1),size(y1shuffle,2),max(n1)); % fill with NaN for matched size
+%             s1(:,:,1:size(y1shuffle,3))=y1shuffle;
+%             y2shuffle=yy{m}(:,:,shuffle==2);
+%             s2=NaN(size(y2shuffle,1),size(y2shuffle,2),max(n2));
+%             s2(:,:,1:size(y2shuffle,3))=y2shuffle;
+%             if m==1 % concatenate mice back together
+%                y1=s1;
+%                y2=s2;
+%             else
+%                 y1=cat(1,y1,s1);
+%                 y2=cat(1,y2,s2);
+%             end
+%         end
+%         
+%         clear s1 s2 y1shuffle y2shuffle
+%         
+%         y1mean = mean(y1,3,'omitnan'); % mean across trials in cond 1
+%         y2mean = mean(y2,3,'omitnan');        
+%         a.shuffleDiffTrial{cd}(:,:,j)=abs(y1mean-y2mean);
+%         clear y1mean y2mean
+%         
+%         y11=y1(:,:,1:2:end);
+%         y12=y1(:,:,2:2:end);
+% 
+%         y21=y2(:,:,1:2:end);
+%         y22=y2(:,:,2:2:end);
+%         
+%         clear y1 y2
+%         
+%         y1mean1 = mean(y11,3,'omitnan'); % mean across trials in cond 1
+%         y1mean2 = mean(y12,3,'omitnan');
+%         y2mean1 = mean(y21,3,'omitnan');
+%         y2mean2 = mean(y22,3,'omitnan');
+%         
+%         clear y11 y12 y21 y22
+%         
+%         activityDifferenceTrial1 = y1mean1-y2mean1;
+%         activityDifferenceTrial2 = y1mean2-y2mean2;
+%         
+%         clear y1mean1 y1mean2 y2mean1 y2mean2       
+%         
+%         a.activityDifferenceTrialEBMShuffle{cd}(:,:,j) = (sign(activityDifferenceTrial1).*activityDifferenceTrial2+sign(activityDifferenceTrial2).*activityDifferenceTrial1)/2;
+%         
+%         clear activityDifferenceTrial1 activityDifferenceTrial2
+%         
+%     end
+% end
+% 
+% % ACTIVITY BETWEEN CONDITIONS (DIFFERENTIAL) - WHOLE TRIAL
+% 
+% disp('Calculating whole-trial activity difference');
+% 
+% % RESPONSE ACROSS CONDITIONS MEAN AND OVER TIME
+% 
+% %  population ROC (distrib of avg cell response to condition)
+% 
+% 
+% for cd = 1:size(a.trialCompNames)
+%     cname = a.trialCompNames{cd};
+%     e = a.trialCompEvents(cd);
+%     cy = cellfun(@(z) a.(z),cname,'uniform',0);    
+%     y1 = cy{1};
+%     y2 = cy{2};
+%     
+%     y1mean = mean(y1,3,'omitnan'); % mean across trials in cond 1
+%     y2mean = mean(y2,3,'omitnan');
+%     
+%     if ~isempty(y1) && ~isempty(y2)   
+% 
+%         % DIFFERENCE AND ABSOLUTE DIFFERENCE
+%         a.activityTimeDiffTrial{cd} = y1mean-y2mean;
+%         a.absActivityTimeDiffTrial{cd} = abs(y1mean-y2mean);
+%         
+%         % RANK-SUM & ROCs between conditions
+%         for u = 1:a.neuronCt
+%             Activity_1 = squeeze(cy{1}(u,:,:))';
+%             Activity_2 = squeeze(cy{2}(u,:,:))';
+% 
+%             % rank-sum p-val that cell differentiates conditions across time
+%             for t = 1:size(Activity_1,2)
+%                a.RSpvalsTrial{cd,1}(u,t) = ranksum(Activity_1(:,t),Activity_2(:,t));
+%             end
+%         end
+% %         a.pcellsRSTrial{cd,:} = sum(a.RSpvalsTrial{cd,1}<a.pcrit&a.absActivityPostDiffTrial{cd}>a.diffcrit)/a.neuronCt;
+%             % MEAN ROCS   
+% 
+%     % mean ROC for pop over time
+%     
+%     else
+%         a.activityTimeDiffTrial{cd} = NaN;
+%         a.absActivityTimeDiffTrial{cd} = NaN;
+%         a.RSpvalsTrial{cd,1} = NaN(a.neuronCt,80);
+%         a.pcellsRSTrial{cd,:} = NaN;
+%     end
+% 
+% end
+% 
+% % WHOLE TRIAL ACTIVITY DIFFERENCES
+% 
+% disp('Calculating whole-trial indices');
+% 
+% for cd = 1:size(a.trialCompNames)
+%     cname = a.trialCompNames{cd};
+%     e = a.trialCompEvents(cd);
+%     cy = cellfun(@(z) a.(z),cname,'uniform',0);    
+%     y1 = cy{1};
+%     y2 = cy{2};
+%     
+%     clear cy;
+%     
+%     y11=y1(:,:,1:2:end);
+%     y12=y1(:,:,2:2:end);
+%     
+%     y21=y2(:,:,1:2:end);
+%     y22=y2(:,:,2:2:end);    
+%     
+%     y1mean1 = mean(y11,3,'omitnan'); % mean across trials in cond 1
+%     y1mean2 = mean(y12,3,'omitnan');
+%     y2mean1 = mean(y21,3,'omitnan');
+%     y2mean2 = mean(y22,3,'omitnan');
+%     
+%     activityDifferenceTrial1 = y1mean1-y2mean1;
+%     activityDifferenceTrial2 = y1mean2-y2mean2;
+%     a.activityDifferenceTrialEBM{cd} = (sign(activityDifferenceTrial1).*activityDifferenceTrial2+sign(activityDifferenceTrial2).*activityDifferenceTrial1)/2;
+%     
+%     for t=1:size(activityDifferenceTrial1,2)
+%         a.activityDifferenceTrialEBMSig{cd}(:,t) = signrank(a.activityDifferenceTrialEBM{cd}(:,t));
+%     end
+% end
 
-mouseCells=histc(a.mouse(:),unique(a.mouse));
-mouseCellCts=[0; cumsum(mouseCells)];
-
-for cd = 1:size(a.trialCompNames)
-    cname = a.trialCompNames{cd};
-    e = a.trialCompEvents(cd);
-    cy = cellfun(@(z) a.(z),cname,'uniform',0);    
-    y1 = cy{1}; % all mice all activity for condition 1
-    y2 = cy{2};
-    n1=sum(~isnan(y1(cumsum(mouseCells),1,:)),3); % number of non-NaN trials per mouse
-    n2=sum(~isnan(y2(cumsum(mouseCells),1,:)),3);
-    clear ii;
-    for m=1:numel(mice)
-        yy1{m}=y1(mouseCellCts(m)+1:mouseCellCts(m+1),:,1:n1(m)); % that mouse's activity (noNaN) for condition 1
-        yy2{m}=y2(mouseCellCts(m)+1:mouseCellCts(m+1),:,1:n2(m));
-        yy{m}=cat(3,yy1{m},yy2{m}); % stack condition 1 and condition 2 for that mouse
-        ii{m}(1:n1(m),1)=1; % label for condition 1 trials for that mouse
-        ii{m}(n1(m)+1:n1(m)+n2(m),1)=2; % label for condition 2 trials for that mouse       
-    end
-    
-    clear yy1 yy2 y1 y2 cy
-    
-    for j=1:1000
-        for m=1:numel(mice) 
-            shuffle = ii{m}(randperm(size(ii{m},1))'); % shuffle whether trials are condition 1 or condition 2
-            y1shuffle=yy{m}(:,:,shuffle==1); % take a random subset to be condition 1 of condition 1 size
-            s1=NaN(size(y1shuffle,1),size(y1shuffle,2),max(n1)); % fill with NaN for matched size
-            s1(:,:,1:size(y1shuffle,3))=y1shuffle;
-            y2shuffle=yy{m}(:,:,shuffle==2);
-            s2=NaN(size(y2shuffle,1),size(y2shuffle,2),max(n2));
-            s2(:,:,1:size(y2shuffle,3))=y2shuffle;
-            if m==1 % concatenate mice back together
-               y1=s1;
-               y2=s2;
-            else
-                y1=cat(1,y1,s1);
-                y2=cat(1,y2,s2);
-            end
-        end
-        
-        clear s1 s2 y1shuffle y2shuffle
-        
-        y1mean = mean(y1,3,'omitnan'); % mean across trials in cond 1
-        y2mean = mean(y2,3,'omitnan');        
-        a.shuffleDiffTrial{cd}(:,:,j)=abs(y1mean-y2mean);
-        clear y1mean y2mean
-        
-        y11=y1(:,:,1:2:end);
-        y12=y1(:,:,2:2:end);
-
-        y21=y2(:,:,1:2:end);
-        y22=y2(:,:,2:2:end);
-        
-        clear y1 y2
-        
-        y1mean1 = mean(y11,3,'omitnan'); % mean across trials in cond 1
-        y1mean2 = mean(y12,3,'omitnan');
-        y2mean1 = mean(y21,3,'omitnan');
-        y2mean2 = mean(y22,3,'omitnan');
-        
-        clear y11 y12 y21 y22
-        
-        activityDifferenceTrial1 = y1mean1-y2mean1;
-        activityDifferenceTrial2 = y1mean2-y2mean2;
-        
-        clear y1mean1 y1mean2 y2mean1 y2mean2       
-        
-        a.activityDifferenceTrialEBMShuffle{cd}(:,:,j) = (sign(activityDifferenceTrial1).*activityDifferenceTrial2+sign(activityDifferenceTrial2).*activityDifferenceTrial1)/2;
-        
-        clear activityDifferenceTrial1 activityDifferenceTrial2
-        
-    end
-end
-
-%% ACTIVITY BETWEEN CONDITIONS (DIFFERENTIAL) - WHOLE TRIAL
-
-disp('Calculating whole-trial activity difference');
-
-% RESPONSE ACROSS CONDITIONS MEAN AND OVER TIME
-
-%  population ROC (distrib of avg cell response to condition)
 
 
-for cd = 1:size(a.trialCompNames)
-    cname = a.trialCompNames{cd};
-    e = a.trialCompEvents(cd);
-    cy = cellfun(@(z) a.(z),cname,'uniform',0);    
-    y1 = cy{1};
-    y2 = cy{2};
-    
-    y1mean = mean(y1,3,'omitnan'); % mean across trials in cond 1
-    y2mean = mean(y2,3,'omitnan');
-    
-    if ~isempty(y1) && ~isempty(y2)   
-
-        % DIFFERENCE AND ABSOLUTE DIFFERENCE
-        a.activityTimeDiffTrial{cd} = y1mean-y2mean;
-        a.absActivityTimeDiffTrial{cd} = abs(y1mean-y2mean);
-        
-        % RANK-SUM & ROCs between conditions
-        for u = 1:a.neuronCt
-            Activity_1 = squeeze(cy{1}(u,:,:))';
-            Activity_2 = squeeze(cy{2}(u,:,:))';
-
-            % rank-sum p-val that cell differentiates conditions across time
-            for t = 1:size(Activity_1,2)
-               a.RSpvalsTrial{cd,1}(u,t) = ranksum(Activity_1(:,t),Activity_2(:,t));
-            end
-        end
-%         a.pcellsRSTrial{cd,:} = sum(a.RSpvalsTrial{cd,1}<a.pcrit&a.absActivityPostDiffTrial{cd}>a.diffcrit)/a.neuronCt;
-            % MEAN ROCS   
-
-    % mean ROC for pop over time
-    
-    else
-        a.activityTimeDiffTrial{cd} = NaN;
-        a.absActivityTimeDiffTrial{cd} = NaN;
-        a.RSpvalsTrial{cd,1} = NaN(a.neuronCt,80);
-        a.pcellsRSTrial{cd,:} = NaN;
-    end
-
-end
-
-%% WHOLE TRIAL ACTIVITY DIFFERENCES
-
-disp('Calculating whole-trial indices');
-
-for cd = 1:size(a.trialCompNames)
-    cname = a.trialCompNames{cd};
-    e = a.trialCompEvents(cd);
-    cy = cellfun(@(z) a.(z),cname,'uniform',0);    
-    y1 = cy{1};
-    y2 = cy{2};
-    
-    clear cy;
-    
-    y11=y1(:,:,1:2:end);
-    y12=y1(:,:,2:2:end);
-    
-    y21=y2(:,:,1:2:end);
-    y22=y2(:,:,2:2:end);    
-    
-    y1mean1 = mean(y11,3,'omitnan'); % mean across trials in cond 1
-    y1mean2 = mean(y12,3,'omitnan');
-    y2mean1 = mean(y21,3,'omitnan');
-    y2mean2 = mean(y22,3,'omitnan');
-    
-    activityDifferenceTrial1 = y1mean1-y2mean1;
-    activityDifferenceTrial2 = y1mean2-y2mean2;
-    a.activityDifferenceTrialEBM{cd} = (sign(activityDifferenceTrial1).*activityDifferenceTrial2+sign(activityDifferenceTrial2).*activityDifferenceTrial1)/2;
-    
-    for t=1:size(activityDifferenceTrial1,2)
-        a.activityDifferenceTrialEBMSig{cd}(:,t) = signrank(a.activityDifferenceTrialEBM{cd}(:,t));
-    end
-end
-
-
-%% CORRELATE RT with CENTER ODOR ACTIVITY
-
-y1=a.C_odor1FirstInfoForced;
-e=3;
-ypost1 = squeeze(mean(y1(:,a.okt{e},:),2,'omitnan'));
-yactI=[];
-y2=a.C_odor1FirstRandForced;
-ypost2 = squeeze(mean(y2(:,a.okt{e},:),2,'omitnan'));
-yactNI=[];
-for m=1:max(a.mouse)
-%    ym1=ypost1(a.mouse==m,:);
-   ym1=mean(ypost1(a.mouse==m & a.differentCellsEBM(:,12)==1 ,:));
-   ym1=ym1(~isnan(ym1))';
-   yactI=[yactI; ym1];
-%    ym2=ypost2(a.mouse==m,:);
-%    ym2=ypost2(a.mouse==m,:);
-   ym2=mean(ypost2(a.mouse==m & a.differentCellsEBM(:,12)==1,:));
-   ym2=ym2(~isnan(ym2))';
-   yactNI=[yactNI; ym2];   
-end
-
-[r2I,pI]=corr(yactI,a.rxn(a.imagingChoice==1 & a.imagingPrevCorrect == 1))
-[r2NI,pNI]=corr(yactNI,a.rxn(a.imagingChoice==3 & a.imagingPrevCorrect == 1))
-
-figure()
-fig=gcf;
-fig.PaperUnits = 'inches';
-fig.PaperPosition = [0 0 11 8.5];
-set(fig,'PaperOrientation','landscape');
-ax1=nsubplot(1,2,1,1);
-scatter(a.rxn(a.imagingChoice==1 & a.imagingPrevCorrect == 1),yactI)
-% plot(ax1,[0 0],[-1 +1].*10^10,'color','k','yliminclude','off');
-% plot(ax1,[-1 +1].*10^10,[0 0],'color','k','xliminclude','off');
-xlabel('Reaction Time')
-ylabel('Mean Population Activity for Info Coding Cells')
-xlim([0.2 1.5])
-ylim([0 2])
-axis square
-title(['Information Forced, Correlation = ' num2str(r2I) ' p = ' num2str(pI)])
-
-ax1=nsubplot(1,2,1,2);
-scatter(a.rxn(a.imagingChoice==3 & a.imagingPrevCorrect == 1),yactNI)
-% plot(ax1,[0 0],[-1 +1].*10^10,'color','k','yliminclude','off');
-% plot(ax1,[-1 +1].*10^10,[0 0],'color','k','xliminclude','off');
-xlabel('Reaction Time')
-ylabel('Mean Population Activity  for Info Coding Cells')
-xlim([0.2 1.5])
-ylim([0 2])
-axis square
-
-title(['No Information Forced, Correlation = ' num2str(r2NI) ' p = ' num2str(pNI)])
-
-saveas(fig,fullfile(output_dir,[strjoin(mice,'_'),'_RxnCorrelationInfoCells']),'pdf');
 
 
 

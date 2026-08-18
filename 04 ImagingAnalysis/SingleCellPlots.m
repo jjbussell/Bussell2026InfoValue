@@ -1,16 +1,4 @@
-% Mean conditional activity
-%{
-info left
-info right
-rand left
-rand right
-
-difference info-rand on each side
-overall difference info-rand
-overall difference info-side
-
-raw activity in each condition
-%}
+%% Plots for single cells
 
 sorting = 1;
 
